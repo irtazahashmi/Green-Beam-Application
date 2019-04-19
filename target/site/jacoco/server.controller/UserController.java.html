@@ -1,0 +1,637 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GreenBeam - OOP-Project</a> &gt; <a href="index.source.html" class="el_package">server.controller</a> &gt; <span class="el_source">UserController.java</span></div><h1>UserController.java</h1><pre class="source lang-java linenums">package server.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import server.exception.BadCredentialsException;
+import server.exception.ResourceNotFoundException;
+import server.exception.UserAlreadyRegistered;
+
+import server.model.Achievements;
+import server.model.AchievementsType;
+import server.model.EmissionFriend;
+import server.model.Emissions;
+import server.model.EmissionsClient;
+import server.model.Friends;
+import server.model.FriendsUserResp;
+import server.model.JwtUser;
+import server.model.Users;
+import server.repository.AchievementRepository;
+import server.repository.EmissionRepository;
+import server.repository.FriendsRepository;
+import server.repository.UserRepository;
+import server.security.JwtValidator;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+
+@RestController
+@RequestMapping(&quot;/rest&quot;)
+<span class="fc" id="L38">public class UserController {</span>
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private EmissionRepository emissionRepository;
+
+    @Autowired
+    private AchievementRepository achievementRepository;
+
+    @Autowired
+    private FriendsRepository friendsRepository;
+
+<span class="fc" id="L52">    private JwtValidator jwtValidator = new JwtValidator();</span>
+
+    // Returns all the users in the database.
+    @GetMapping(&quot;/user/all&quot;)
+    public List&lt;Users&gt; getUsers() {
+<span class="fc" id="L57">        return userRepository.findAll();</span>
+    }
+
+    /**
+     * API path to register a user.
+     * @param user user info
+     * @return new user object instance
+     * @throws UserAlreadyRegistered exception thrown in case user already registered.
+     */
+
+    @PostMapping(value = &quot;/save/user&quot;)
+    public Users saveUser(@RequestBody Users user) throws UserAlreadyRegistered {
+
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (userRepository.findByUsername(user.getUsername()) != null) {</span>
+<span class="fc" id="L71">            throw new UserAlreadyRegistered(</span>
+<span class="fc" id="L72">                    &quot;Username: &quot; + user.getUsername()</span>
+                            + &quot; is already in use..&quot;);
+        }
+
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        if (userRepository.findByEmail(user.getEmail()) != null) {</span>
+<span class="fc" id="L77">            throw new UserAlreadyRegistered(&quot;Email is in use...&quot;);</span>
+        }
+
+<span class="fc" id="L80">        BCryptPasswordEncoder encryptPasswordEncoder = new BCryptPasswordEncoder();</span>
+
+<span class="fc" id="L82">        user.setPassword(encryptPasswordEncoder.encode(user.getPassword()));</span>
+
+<span class="fc" id="L84">        Users users = userRepository.save(user);</span>
+
+<span class="fc" id="L86">        Achievements achievements = new Achievements(user.getId(), 6L);</span>
+<span class="fc" id="L87">        achievementRepository.save(achievements);</span>
+
+<span class="fc" id="L89">        Friends friends = new Friends(user.getId(),</span>
+<span class="fc" id="L90">                user.getId(), &quot;1&quot;);</span>
+<span class="fc" id="L91">        friendsRepository.save(friends);</span>
+
+<span class="fc" id="L93">        Emissions emissions = new Emissions(users.getId(), &quot;1&quot;, 0, null);</span>
+<span class="fc" id="L94">        emissionRepository.save(emissions);</span>
+<span class="fc" id="L95">        return users;</span>
+    }
+
+    /**
+     * Retrieves a list of all users matching the given username.
+     * @param username username to search for.
+     * @return the matching users.
+     */
+
+    @GetMapping(value = &quot;/search/{username}&quot;)
+    public List&lt;FriendsUserResp&gt; searchFriends(@PathVariable(&quot;username&quot;) String username) {
+<span class="fc" id="L106">        List&lt;FriendsUserResp&gt; searchedFriends = userRepository.queryFriends(username);</span>
+<span class="fc" id="L107">        return searchedFriends;</span>
+    }
+
+    @GetMapping(&quot;/user/get/{username}&quot;)
+    public Long getUsername(@PathVariable(&quot;username&quot;) String username) {
+<span class="nc" id="L112">        Users user = userRepository.findByUsername(username);</span>
+<span class="nc" id="L113">        return user.getId();</span>
+    }
+
+    @GetMapping(&quot;/user/get/username/{id}&quot;)
+    public String getUserUsername(@PathVariable(&quot;id&quot;) Long id) {
+<span class="nc" id="L118">        return userRepository.findUserUsername(id);</span>
+    }
+
+    /**
+     * Returns the info of a specific user.
+     * @param request request object instance
+     * @param id id of the user
+     * @return New FriendsUserResp object instance.
+     * @throws ResourceNotFoundException exception
+     * @throws BadCredentialsException exception.
+     */
+
+    @GetMapping(value = &quot;/user/{id}&quot;)
+    public FriendsUserResp getUser(HttpServletRequest request,
+                                   @PathVariable(&quot;id&quot;) Long id)
+            throws ResourceNotFoundException,
+            BadCredentialsException {
+
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        if (isIncorrectUser(request, id)) {</span>
+<span class="fc" id="L137">            throw new BadCredentialsException(&quot;Nice try!&quot;);</span>
+        }
+
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        if (userRepository.findUserById(id) == null) {</span>
+<span class="fc" id="L141">            throw new ResourceNotFoundException(&quot;The user is not available&quot;);</span>
+        }
+
+<span class="fc" id="L144">        return userRepository.findSpecificUserById(id);</span>
+    }
+
+    /**
+     * Return a list of all the friends of user with id given as parameter.
+     * @param request request object instance.
+     * @param id id of the user.
+     * @return all friends of a user.
+     * @throws BadCredentialsException exception.
+     * @throws ResourceNotFoundException exception.
+     */
+
+    @GetMapping(&quot;/user/allfriends/{id}&quot;)
+    public List&lt;FriendsUserResp&gt; getFriendsUser(
+            HttpServletRequest request, @PathVariable(&quot;id&quot;) Long id)
+            throws BadCredentialsException, ResourceNotFoundException {
+
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        if (isIncorrectUser(request, id)) {</span>
+<span class="fc" id="L162">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+
+<span class="fc bfc" id="L165" title="All 2 branches covered.">        if (userRepository.findUserById(id) == null) {</span>
+<span class="fc" id="L166">            throw new ResourceNotFoundException(&quot;The user is not available&quot;);</span>
+        }
+
+<span class="fc" id="L169">        return userRepository.findAllFriendsUser(id);</span>
+    }
+
+    /**
+     * Adding an emissions of type vegeterian meal / local produce.
+     * @param httpServletRequest request obj
+     * @param id id of the user
+     * @param emissionsClient emissionClient object instance
+     * @return String representing the result
+     * @throws BadCredentialsException exception
+     */
+
+    @PostMapping(&quot;/user/add/emission/vegMeal/{id}&quot;)
+    public String addEmissions(HttpServletRequest httpServletRequest,
+                                @PathVariable(&quot;id&quot;) Long id,
+                                @RequestBody EmissionsClient emissionsClient)
+                                throws BadCredentialsException {
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if (isIncorrectUser(httpServletRequest, id)) {</span>
+<span class="fc" id="L187">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+<span class="nc" id="L189">        Users user = userRepository.findUserById(id);</span>
+<span class="nc" id="L190">        Emissions emissions = new Emissions(id, emissionsClient.getEmissionType(),</span>
+<span class="nc" id="L191">                emissionsClient.getCarbonEmission(), emissionsClient.getDate());</span>
+<span class="nc" id="L192">        emissionRepository.save(emissions);</span>
+
+<span class="nc" id="L194">        int numberVegMeals1 = emissionRepository.getNumberTimesVegMeal(id);</span>
+<span class="nc bnc" id="L195" title="All 4 branches missed.">        if (achievementRepository.getNumberOfSpecificAchievement(1L, id) == 0</span>
+                &amp;&amp; numberVegMeals1 &gt;= 3) {
+<span class="nc" id="L197">            Achievements achievements = new Achievements(id, 1L);</span>
+<span class="nc" id="L198">            achievementRepository.save(achievements);</span>
+        }
+<span class="nc bnc" id="L200" title="All 4 branches missed.">        if (achievementRepository.getNumberOfSpecificAchievement(2L, id) == 0</span>
+                &amp;&amp; numberVegMeals1 &gt;= 7) {
+<span class="nc" id="L202">            Achievements achievements = new Achievements(id, 2L);</span>
+<span class="nc" id="L203">            achievementRepository.save(achievements);</span>
+        }
+<span class="nc bnc" id="L205" title="All 4 branches missed.">        if (achievementRepository.getNumberOfSpecificAchievement(3L, id) == 0</span>
+                &amp;&amp; numberVegMeals1 &gt;= 30) {
+<span class="nc" id="L207">            Achievements achievements = new Achievements(id, 3L);</span>
+<span class="nc" id="L208">            achievementRepository.save(achievements);</span>
+        }
+
+<span class="nc" id="L211">        int numberLocalProducts = emissionRepository.getNumberLocalProducts(id);</span>
+<span class="nc bnc" id="L212" title="All 4 branches missed.">        if (achievementRepository.getNumberOfSpecificAchievement(8L, id) == 0</span>
+                &amp;&amp; numberLocalProducts &gt;= 10) {
+<span class="nc" id="L214">            Achievements achievements = new Achievements(id, 8L);</span>
+<span class="nc" id="L215">            achievementRepository.save(achievements);</span>
+        }
+
+<span class="nc" id="L218">        int numberSolarPanels = emissionRepository.getSolarPanelsInstalled(id);</span>
+<span class="nc bnc" id="L219" title="All 4 branches missed.">        if (achievementRepository.getNumberOfSpecificAchievement(9L, id) == 0</span>
+                &amp;&amp; numberSolarPanels &gt;= 1) {
+<span class="nc" id="L221">            Achievements achievements = new Achievements(id, 9L);</span>
+<span class="nc" id="L222">            achievementRepository.save(achievements);</span>
+        }
+
+<span class="nc" id="L225">        return &quot;Saved&quot;;</span>
+    }
+
+    /**
+     * Add emissions of a user of type transportation.
+     * @param httpServletRequest request object
+     * @param id user id.
+     * @param emissionsClient emissionClient
+     * @return new String
+     * @throws BadCredentialsException exception
+     */
+
+    @PostMapping(&quot;/user/add/emission/transportation/{id}&quot;)
+    public String addEmissionsBike(HttpServletRequest httpServletRequest,
+                               @PathVariable(&quot;id&quot;) Long id,
+                               @RequestBody EmissionsClient emissionsClient)
+            throws BadCredentialsException {
+
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        if (isIncorrectUser(httpServletRequest, id)) {</span>
+<span class="fc" id="L244">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+
+<span class="fc" id="L247">        Users user = userRepository.findUserById(id);</span>
+<span class="fc" id="L248">        Emissions emissions = new Emissions(id, emissionsClient.getEmissionType(),</span>
+<span class="fc" id="L249">                emissionsClient.getCarbonEmission(), emissionsClient.getDate());</span>
+<span class="fc" id="L250">        emissionRepository.save(emissions);</span>
+
+<span class="fc" id="L252">        int numberBike = emissionRepository.getNumberTransportationInsteadCar(id);</span>
+<span class="fc bfc" id="L253" title="All 4 branches covered.">        if (achievementRepository.getNumberOfSpecificAchievement(4L, id) == 0</span>
+                &amp;&amp; numberBike &gt;= 10) {
+<span class="fc" id="L255">            Achievements achievements = new Achievements(id, 4L);</span>
+<span class="fc" id="L256">            achievementRepository.save(achievements);</span>
+        }
+
+<span class="fc" id="L259">        int numberTransportation = emissionRepository.getNumberTransportationInsteadCar(id);</span>
+<span class="fc bfc" id="L260" title="All 4 branches covered.">        if (achievementRepository.getNumberOfSpecificAchievement(5L, id) == 0</span>
+                &amp;&amp; numberTransportation &gt;= 30) {
+<span class="fc" id="L262">            Achievements achievements = new Achievements(id, 5L);</span>
+<span class="fc" id="L263">            achievementRepository.save(achievements);</span>
+        }
+<span class="fc" id="L265">        return &quot;Saved&quot;;</span>
+    }
+
+    /**
+     * Get achievements of a user.
+     * @param httpServletRequest request object.
+     * @param id user id
+     * @return new list of achievements types.
+     * @throws BadCredentialsException exception
+     */
+
+    @GetMapping(&quot;user/get/achievements/{id}&quot;)
+    public List&lt;AchievementsType&gt; getAchievementsUser(HttpServletRequest httpServletRequest,
+                                                      @PathVariable(&quot;id&quot;) Long id)
+            throws BadCredentialsException {
+<span class="fc bfc" id="L280" title="All 2 branches covered.">        if (isIncorrectUser(httpServletRequest, id)) {</span>
+<span class="fc" id="L281">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+<span class="fc" id="L283">        return achievementRepository.getAllAchievementsTypeOfUser(id);</span>
+    }
+
+    /**
+     * Get all friend requests sent.
+     * @param httpServletRequest request object
+     * @param id user id
+     * @return new List of friends
+     * @throws BadCredentialsException exception
+     */
+
+    @GetMapping(&quot;/user/get/friend/request/sent/{id}&quot;)
+    public List&lt;Friends&gt; friendRequestSend(HttpServletRequest httpServletRequest,
+                               @PathVariable(&quot;id&quot;) Long id)
+            throws BadCredentialsException {
+<span class="fc" id="L298">        String response = &quot;&quot;;</span>
+<span class="fc bfc" id="L299" title="All 2 branches covered.">        if (isIncorrectUser(httpServletRequest, id)) {</span>
+<span class="fc" id="L300">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+
+<span class="fc" id="L303">        return friendsRepository.getFriendRequestSend(id);</span>
+    }
+
+    /**
+     * Path to add a friend.
+     * @param id user id
+     * @param relatingUserId other user id.
+     * @param httpServletRequest request object
+     * @return new string
+     * @throws BadCredentialsException exception
+     */
+
+    @PostMapping(&quot;/user/add/friend/{id}&quot;)
+    public String addFriend(
+            @PathVariable(&quot;id&quot;) Long id,
+            @RequestBody Long relatingUserId,
+            HttpServletRequest httpServletRequest) throws BadCredentialsException {
+
+<span class="fc bfc" id="L321" title="All 2 branches covered.">        if (isIncorrectUser(httpServletRequest, id)) {</span>
+<span class="fc" id="L322">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+
+<span class="fc" id="L325">        Friends friendTo = new Friends(id, relatingUserId, &quot;3&quot;);</span>
+<span class="fc" id="L326">        Friends friendsFrom = new Friends(relatingUserId, id, &quot;2&quot;);</span>
+
+<span class="fc" id="L328">        friendsRepository.save(friendsFrom);</span>
+<span class="fc" id="L329">        friendsRepository.save(friendTo);</span>
+
+<span class="fc" id="L331">        int numberFriends = userRepository.findAllFriendsUser(id).size();</span>
+<span class="pc bpc" id="L332" title="2 of 4 branches missed.">        if (achievementRepository.getNumberOfSpecificAchievement(6L, id) == 0</span>
+                &amp;&amp; numberFriends &gt;= 3) {
+<span class="nc" id="L334">            Achievements achievements = new Achievements(id, 6L);</span>
+<span class="nc" id="L335">            achievementRepository.save(achievements);</span>
+        }
+
+<span class="fc" id="L338">        return &quot;Saved&quot;;</span>
+    }
+
+    /**
+     * Path to accept a friend.
+     * @param id id of user
+     * @param relatingUserId id of other user
+     * @param httpServletRequest request object
+     * @return new string
+     * @throws BadCredentialsException exception
+     */
+
+    @PostMapping(&quot;/user/accept/friend/{id}&quot;)
+    public String acceptFriend(
+            @PathVariable(&quot;id&quot;) Long id,
+            @RequestBody Long relatingUserId,
+            HttpServletRequest httpServletRequest) throws BadCredentialsException {
+
+<span class="fc bfc" id="L356" title="All 2 branches covered.">        if (isIncorrectUser(httpServletRequest, id)) {</span>
+<span class="fc" id="L357">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+
+<span class="fc" id="L360">        friendsRepository.updateRelationshipType(&quot;1&quot;, id, relatingUserId);</span>
+<span class="fc" id="L361">        friendsRepository.updateRelationshipType(&quot;1&quot;, relatingUserId, id);</span>
+<span class="fc" id="L362">        return &quot;Saved&quot;;</span>
+    }
+
+    /**
+     * Reject a friendship path.
+     * @param id user id
+     * @param relatingUserId other user id
+     * @param httpServletRequest request
+     * @return new string
+     * @throws BadCredentialsException exception
+     */
+
+    @PostMapping(&quot;/user/reject/friend/{id}&quot;)
+    public String rejectFriend(
+            @PathVariable(&quot;id&quot;) Long id,
+            @RequestBody Long relatingUserId,
+            HttpServletRequest httpServletRequest) throws BadCredentialsException {
+
+<span class="fc bfc" id="L380" title="All 2 branches covered.">        if (isIncorrectUser(httpServletRequest, id)) {</span>
+<span class="fc" id="L381">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+
+<span class="fc" id="L384">        friendsRepository.deleteFriend(relatingUserId, id);</span>
+<span class="fc" id="L385">        friendsRepository.deleteFriend(id, relatingUserId);</span>
+<span class="fc" id="L386">        return &quot;Deleted&quot;;</span>
+    }
+
+    /**
+     * Get friend requests received.
+     * @param httpServletRequest request object
+     * @param id user id
+     * @return new list of friends
+     * @throws BadCredentialsException exception
+     */
+
+    @GetMapping(&quot;/user/get/friend/request/received/{id}&quot;)
+    public List&lt;Friends&gt; friendRequestRecieved(HttpServletRequest httpServletRequest,
+                                           @PathVariable(&quot;id&quot;) Long id)
+            throws BadCredentialsException {
+<span class="fc" id="L401">        String response = &quot;&quot;;</span>
+<span class="fc bfc" id="L402" title="All 2 branches covered.">        if (isIncorrectUser(httpServletRequest, id)) {</span>
+<span class="fc" id="L403">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+
+<span class="fc" id="L406">        return friendsRepository.getFriendRequestRecieved(id);</span>
+    }
+
+    /**
+     * Change the country of a user.
+     * @param country country
+     * @param userId user id
+     * @param httpServletRequest request object
+     * @return new string
+     * @throws BadCredentialsException exception
+     */
+
+    @PostMapping(&quot;/user/change/country/{id}&quot;)
+    public String changeCountry(@RequestBody String country,
+                                @PathVariable(&quot;id&quot;) Long userId,
+                                HttpServletRequest httpServletRequest)
+            throws BadCredentialsException {
+<span class="fc" id="L423">        String response = &quot;&quot;;</span>
+<span class="fc bfc" id="L424" title="All 2 branches covered.">        if (isIncorrectUser(httpServletRequest, userId)) {</span>
+<span class="fc" id="L425">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+
+<span class="fc" id="L428">        userRepository.updateCountryUser(country, userId);</span>
+<span class="fc" id="L429">        response = &quot;Changed&quot;;</span>
+<span class="fc" id="L430">        return response;</span>
+    }
+
+    /**
+     * Change name of a user.
+     * @param name name
+     * @param userId user id.
+     * @param httpServletRequest req obj
+     * @return new string
+     * @throws BadCredentialsException exception
+     */
+
+    @PostMapping(&quot;/user/change/name/{id}&quot;)
+    public String changeName(@RequestBody String name,
+                                @PathVariable(&quot;id&quot;) Long userId,
+                                HttpServletRequest httpServletRequest)
+            throws BadCredentialsException {
+<span class="fc" id="L447">        String response = &quot;&quot;;</span>
+<span class="fc bfc" id="L448" title="All 2 branches covered.">        if (isIncorrectUser(httpServletRequest, userId)) {</span>
+<span class="fc" id="L449">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+
+<span class="fc" id="L452">        userRepository.updateNameUser(name, userId);</span>
+<span class="fc" id="L453">        response = &quot;Changed&quot;;</span>
+<span class="fc" id="L454">        return response;</span>
+    }
+
+    /**
+     * Change dob of a user.
+     * @param dateOfBirth name
+     * @param userId user id.
+     * @param httpServletRequest req obj
+     * @return new string
+     * @throws BadCredentialsException exception
+     */
+
+    @PostMapping(&quot;/user/change/dateOfBirth/{id}&quot;)
+    public String changeDateOfBirth(@RequestBody Date dateOfBirth,
+                             @PathVariable(&quot;id&quot;) Long userId,
+                             HttpServletRequest httpServletRequest) throws BadCredentialsException {
+<span class="fc" id="L470">        String response = &quot;&quot;;</span>
+<span class="fc bfc" id="L471" title="All 2 branches covered.">        if (isIncorrectUser(httpServletRequest, userId)) {</span>
+<span class="fc" id="L472">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+
+<span class="fc" id="L475">        userRepository.updateDateOfBirthUser(dateOfBirth, userId);</span>
+<span class="fc" id="L476">        response = &quot;Changed&quot;;</span>
+<span class="fc" id="L477">        return response;</span>
+    }
+
+    /**
+     * Change email of a user.
+     * @param email email
+     * @param userId user id
+     * @param httpServletRequest req object
+     * @return new string
+     * @throws BadCredentialsException exception
+     */
+
+    @PostMapping(&quot;/user/change/email/{id}&quot;)
+    public String changeEmail(@RequestBody String email,
+                                    @PathVariable(&quot;id&quot;) Long userId,
+                                    HttpServletRequest httpServletRequest)
+            throws BadCredentialsException {
+<span class="fc" id="L494">        String response = &quot;&quot;;</span>
+<span class="fc bfc" id="L495" title="All 2 branches covered.">        if (isIncorrectUser(httpServletRequest, userId)) {</span>
+<span class="fc" id="L496">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+
+<span class="fc" id="L499">        userRepository.updateEmailUser(email, userId);</span>
+<span class="fc" id="L500">        response = &quot;Changed&quot;;</span>
+<span class="fc" id="L501">        return response;</span>
+    }
+
+    /**
+     * Change password of a user.
+     * @param password password
+     * @param userId user id
+     * @param httpServletRequest req object
+     * @return new string
+     * @throws BadCredentialsException exception
+     */
+
+    @PostMapping(&quot;/user/change/password/{id}&quot;)
+    public String changePassword(@RequestBody String password,
+                                    @PathVariable(&quot;id&quot;) Long userId,
+                                    HttpServletRequest httpServletRequest)
+            throws BadCredentialsException {
+<span class="fc" id="L518">        String response = &quot;&quot;;</span>
+<span class="fc bfc" id="L519" title="All 2 branches covered.">        if (isIncorrectUser(httpServletRequest, userId)) {</span>
+<span class="fc" id="L520">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+<span class="fc" id="L522">        BCryptPasswordEncoder bcryptPasswordEncoder = new</span>
+                BCryptPasswordEncoder();
+<span class="fc" id="L524">        String encryptedPasswd = bcryptPasswordEncoder</span>
+<span class="fc" id="L525">                .encode(password);</span>
+<span class="fc" id="L526">        userRepository.updatePasswordUser(encryptedPasswd, userId);</span>
+<span class="fc" id="L527">        response = &quot;Changed&quot;;</span>
+<span class="fc" id="L528">        return response;</span>
+    }
+
+    /**
+     * Get emissions of all friends of a user.
+     * @param httpServletRequest request object
+     * @param userId user id
+     * @return new list of emissionfriend objects
+     * @throws BadCredentialsException exception
+     */
+
+    @GetMapping(&quot;/user/get/friends/emission/{id}&quot;)
+    public List&lt;EmissionFriend&gt; getAllFriendsTotalEmissions(HttpServletRequest httpServletRequest,
+                                                        @PathVariable(&quot;id&quot;)
+                                                        Long userId)
+            throws BadCredentialsException {
+<span class="fc bfc" id="L544" title="All 2 branches covered.">        if (isIncorrectUser(httpServletRequest, userId)) {</span>
+<span class="fc" id="L545">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+<span class="fc" id="L547">        List&lt;FriendsUserResp&gt; top = userRepository.findAllFriendsUser(userId);</span>
+
+<span class="fc" id="L549">        List&lt;EmissionFriend&gt; listTop = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L551" title="All 2 branches covered.">        for (FriendsUserResp f : top) {</span>
+
+<span class="fc" id="L553">            Double response = emissionRepository.getAllEmisionsOfUser(f.getUsername());</span>
+<span class="fc bfc" id="L554" title="All 2 branches covered.">            if (response != null) {</span>
+<span class="fc" id="L555">                EmissionFriend emiss = new EmissionFriend(f.getUsername(), response);</span>
+<span class="fc" id="L556">                listTop.add(emiss);</span>
+            }
+<span class="fc" id="L558">        }</span>
+<span class="fc" id="L559">        return listTop;</span>
+    }
+
+    /**
+     * Get top 5 friends in terms of emissions.
+     * @param httpServletRequest req object
+     * @param userId user id
+     * @return new emissionFriend list.
+     * @throws BadCredentialsException exception
+     */
+
+    @GetMapping(&quot;/user/get/top/friends/emission/{id}&quot;)
+    public List&lt;EmissionFriend&gt; getTop5FriendsEmissions(HttpServletRequest httpServletRequest,
+                                                         @PathVariable(&quot;id&quot;)
+                                                                 Long userId)
+            throws BadCredentialsException {
+
+
+<span class="pc bpc" id="L577" title="1 of 2 branches missed.">        if (isIncorrectUser(httpServletRequest, userId)) {</span>
+<span class="fc" id="L578">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+<span class="nc" id="L580">        List&lt;EmissionFriend&gt; allFriendsEmissions =</span>
+<span class="nc" id="L581">                getAllFriendsTotalEmissions(httpServletRequest, userId);</span>
+<span class="nc" id="L582">        Collections.sort(allFriendsEmissions, (o1, o2) -&gt; {</span>
+<span class="nc" id="L583">            int result = (int) (o1.getCarbonEmission() - o2.getCarbonEmission());</span>
+<span class="nc" id="L584">            return result;</span>
+        });
+<span class="nc" id="L586">        Collections.reverse(allFriendsEmissions);</span>
+
+<span class="nc" id="L588">        List&lt;EmissionFriend&gt; toReturn = new ArrayList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L590" title="All 2 branches missed.">        if (allFriendsEmissions.size() &gt; 4) {</span>
+<span class="nc bnc" id="L591" title="All 2 branches missed.">            for (int i = 0; i &lt; 5; i++) {</span>
+<span class="nc" id="L592">                toReturn.add(allFriendsEmissions.get(i));</span>
+            }
+        } else {
+<span class="nc" id="L595">            toReturn = allFriendsEmissions;</span>
+        }
+<span class="nc" id="L597">        return toReturn;</span>
+    }
+
+    /**
+     * Get all emissions of a user.
+     * @param httpServletRequest req object
+     * @param userId user id
+     * @return new emissionfriend
+     * @throws BadCredentialsException exception
+     */
+
+    @GetMapping(&quot;/user/get/all/emissions/{id}&quot;)
+    public EmissionFriend getEmissionsOfUser(HttpServletRequest httpServletRequest,
+                                              @PathVariable(&quot;id&quot;) Long userId)
+            throws BadCredentialsException {
+<span class="fc bfc" id="L612" title="All 2 branches covered.">        if (isIncorrectUser(httpServletRequest, userId)) {</span>
+<span class="fc" id="L613">            throw new BadCredentialsException(&quot;Bad credentials&quot;);</span>
+        }
+<span class="fc" id="L615">        String username = userRepository.findUserUsername(userId);</span>
+<span class="fc" id="L616">        Double result = emissionRepository.getAllEmisionsOfUser(username);</span>
+
+<span class="fc bfc" id="L618" title="All 2 branches covered.">        if (result != null) {</span>
+<span class="fc" id="L619">            EmissionFriend returnEmi = new EmissionFriend(username, result);</span>
+<span class="fc" id="L620">            return returnEmi;</span>
+        }
+<span class="fc" id="L622">        return null;</span>
+    }
+
+    private boolean isIncorrectUser(HttpServletRequest request, Long id) {
+<span class="fc" id="L626">        String token = request.getHeader(&quot;Authorisation&quot;).substring(6);</span>
+<span class="fc" id="L627">        JwtUser jwtUser = jwtValidator.validate(token);</span>
+
+<span class="fc bfc" id="L629" title="All 2 branches covered.">        if (jwtUser == null) {</span>
+<span class="fc" id="L630">            return true;</span>
+        }
+
+<span class="fc bfc" id="L633" title="All 2 branches covered.">        return id != jwtUser.getId();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

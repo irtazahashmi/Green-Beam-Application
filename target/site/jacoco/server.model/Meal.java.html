@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Meal.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GreenBeam - OOP-Project</a> &gt; <a href="index.source.html" class="el_package">server.model</a> &gt; <span class="el_source">Meal.java</span></div><h1>Meal.java</h1><pre class="source lang-java linenums">package server.model;
+
+public class Meal {
+
+    private float dairyCalories;
+    private float otherFoodCalories;
+    private float fruitVegetablesCalories;
+    private float cerealCalories;
+
+    /**
+     * Meal of object constructor.
+     * @param dairyCalories - calories (parameter)
+     * @param otherFoodCalories - calories (parameter)
+     * @param fruitVegetablesCalories - calories (parameter)
+     * @param cerealCalories - calories (parameter)
+     */
+    public Meal(float dairyCalories, float otherFoodCalories,
+<span class="fc" id="L18">                float fruitVegetablesCalories, float cerealCalories) {</span>
+<span class="fc" id="L19">        this.dairyCalories = dairyCalories;</span>
+<span class="fc" id="L20">        this.otherFoodCalories = otherFoodCalories;</span>
+<span class="fc" id="L21">        this.fruitVegetablesCalories = fruitVegetablesCalories;</span>
+<span class="fc" id="L22">        this.cerealCalories = cerealCalories;</span>
+<span class="fc" id="L23">    }</span>
+
+
+    /**
+     * Sets new fruitVegetablesCalories.
+     *
+     * @param fruitVegetablesCalories New value of fruitVegetablesCalories.
+     */
+    public void setFruitVegetablesCalories(float fruitVegetablesCalories) {
+<span class="fc" id="L32">        this.fruitVegetablesCalories = fruitVegetablesCalories;</span>
+<span class="fc" id="L33">    }</span>
+
+    /**
+     * Gets dairyCalories.
+     *
+     * @return Value of dairyCalories.
+     */
+    public float getDairyCalories() {
+<span class="fc" id="L41">        return dairyCalories;</span>
+    }
+
+    /**
+     * Gets otherFoodCalories.
+     *
+     * @return Value of otherFoodCalories.
+     */
+    public float getOtherFoodCalories() {
+<span class="fc" id="L50">        return otherFoodCalories;</span>
+    }
+
+    /**
+     * Sets new cerealCalories.
+     *
+     * @param cerealCalories New value of cerealCalories.
+     */
+    public void setCerealCalories(float cerealCalories) {
+<span class="fc" id="L59">        this.cerealCalories = cerealCalories;</span>
+<span class="fc" id="L60">    }</span>
+
+    /**
+     * Sets new otherFoodCalories.
+     *
+     * @param otherFoodCalories New value of otherFoodCalories.
+     */
+    public void setOtherFoodCalories(float otherFoodCalories) {
+<span class="fc" id="L68">        this.otherFoodCalories = otherFoodCalories;</span>
+<span class="fc" id="L69">    }</span>
+
+    /**
+     * Gets fruitVegetablesCalories.
+     *
+     * @return Value of fruitVegetablesCalories.
+     */
+    public float getFruitVegetablesCalories() {
+<span class="fc" id="L77">        return fruitVegetablesCalories;</span>
+    }
+
+    /**
+     * Sets new dairyCalories.
+     *
+     * @param dairyCalories New value of dairyCalories.
+     */
+    public void setDairyCalories(float dairyCalories) {
+<span class="fc" id="L86">        this.dairyCalories = dairyCalories;</span>
+<span class="fc" id="L87">    }</span>
+
+    /**
+     * Gets cerealCalories.
+     *
+     * @return Value of cerealCalories.
+     */
+    public float getCerealCalories() {
+<span class="fc" id="L95">        return cerealCalories;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L100">        return &quot;Meal{&quot;</span>
+                + &quot;dairyCalories=&quot; + dairyCalories
+                + &quot;, otherFoodCalories=&quot; + otherFoodCalories
+                + &quot;, fruitVegetablesCalories=&quot; + fruitVegetablesCalories
+                + &quot;, cerealCalories=&quot; + cerealCalories
+                + '}';
+    }
+
+    @Override
+    public boolean equals(Object object) {
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        if (this == object) {</span>
+<span class="fc" id="L111">            return true;</span>
+        }
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        if (!(object instanceof Meal)) {</span>
+<span class="fc" id="L114">            return false;</span>
+        }
+<span class="fc" id="L116">        Meal meal = (Meal) object;</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        return Float.compare(meal.getDairyCalories(), getDairyCalories()) == 0</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">                &amp;&amp; Float.compare(meal.getOtherFoodCalories(), getOtherFoodCalories()) == 0</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">                &amp;&amp; Float.compare(meal.getFruitVegetablesCalories(),</span>
+<span class="fc" id="L120">                getFruitVegetablesCalories()) == 0</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">                &amp;&amp; Float.compare(meal.getCerealCalories(), getCerealCalories()) == 0;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GreenBeam - OOP-Project</a> &gt; <a href="index.source.html" class="el_package">client.services</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package client.services;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
+import server.model.AchievementsType;
+import server.model.AuthenticateUser;
+import server.model.EmissionFriend;
+import server.model.EmissionsClient;
+import server.model.ErrorDetails;
+import server.model.Friends;
+import server.model.FriendsUserResp;
+import server.model.Users;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Class that represents UserService.
+ */
+
+@Service
+<span class="fc" id="L32">public class UserService {</span>
+
+<span class="fc" id="L34">    private ObjectMapper objectMapper = new ObjectMapper();</span>
+
+    /**
+     *  Gets a specific users' details.
+     * @param restTemplate restTemplate instantation to use.
+     * @param url Url of the request.
+     * @param id id of the user.
+     * @return a new User object.
+     */
+
+    public Users getUser(final RestTemplate restTemplate, String url, final Long id) {
+<span class="fc" id="L45">        url += &quot;/&quot; + id.toString();</span>
+<span class="fc" id="L46">        Users user = null;</span>
+        try {
+
+<span class="fc" id="L49">            user = restTemplate.getForObject(url, Users.class);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">            if (user != null) {</span>
+<span class="fc" id="L51">                System.out.println(user.toString());</span>
+            }
+<span class="fc" id="L53">        } catch (HttpStatusCodeException e) {</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {</span>
+<span class="fc" id="L55">                System.out.println(e.getResponseBodyAsString());</span>
+            }
+<span class="fc" id="L57">        }</span>
+<span class="fc" id="L58">        return user;</span>
+    }
+
+    /**
+     * Method to add a User to the data base.
+     * @param restTemplate restTemplate
+     * @param url url of request
+     * @param user user
+     */
+
+    public String addUser(final RestTemplate restTemplate,
+                        final String url, final Users user) {
+<span class="fc" id="L70">        String returnString = &quot;&quot;;</span>
+        try {
+<span class="fc" id="L72">            Users returns = restTemplate.postForObject(url, user, Users.class);</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            if (returns != null) {</span>
+<span class="fc" id="L74">                returnString = &quot;Registration complete&quot;;</span>
+            }
+<span class="fc" id="L76">        } catch (HttpStatusCodeException e) {</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">            if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {</span>
+<span class="fc" id="L78">                returnString = outputErrorMessage(objectMapper, e.getResponseBodyAsString());</span>
+            }
+<span class="fc" id="L80">        }</span>
+<span class="fc" id="L81">        return returnString;</span>
+    }
+
+    /**
+     * Searches a user friends.
+     * @param restTemplate restTemplate object
+     * @param url server url
+     * @param username user's username
+     * @return new list of friendsuserresp.
+     */
+    public List&lt;FriendsUserResp&gt; searchFriends(final RestTemplate restTemplate, final String url,
+                                               final String username) {
+
+<span class="nc" id="L94">        List&lt;FriendsUserResp&gt; list = new ArrayList&lt;&gt;();</span>
+        try {
+<span class="nc" id="L96">            ResponseEntity&lt;FriendsUserResp[]&gt; responseEntity</span>
+<span class="nc" id="L97">                    = restTemplate.exchange(url + &quot;/&quot; + username,</span>
+                    HttpMethod.GET, new HttpEntity&lt;&gt;(new HttpHeaders()), FriendsUserResp[].class);
+<span class="nc bnc" id="L99" title="All 2 branches missed.">            if (responseEntity.getBody() != null) {</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">                for (FriendsUserResp f : responseEntity.getBody()) {</span>
+<span class="nc" id="L101">                    list.add(f);</span>
+                }
+            }
+<span class="nc" id="L104">        } catch (HttpStatusCodeException e) {</span>
+<span class="nc" id="L105">            e.printStackTrace();</span>
+<span class="nc" id="L106">        }</span>
+<span class="nc" id="L107">        return list;</span>
+    }
+
+    /**
+     * Gets the username of the user's friend.
+     * @param restTemplate restTemplate object
+     * @param url server url
+     * @param username user's username
+     * @param token userToken
+     * @return new user id
+     */
+    public Long getUsername(final RestTemplate restTemplate, final String url,
+                              final String username, final String token) {
+<span class="nc" id="L120">        Long userId = -1L;</span>
+
+<span class="nc" id="L122">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L123">        httpHeaders.set(&quot;Authorisation&quot;, &quot;Token &quot; + token);</span>
+<span class="nc" id="L124">        httpHeaders.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="nc" id="L125">        HttpEntity&lt;Long&gt; entity = new HttpEntity&lt;&gt;(httpHeaders);</span>
+
+        try {
+<span class="nc" id="L128">            ResponseEntity&lt;Long&gt; responseEntity =</span>
+<span class="nc" id="L129">                    restTemplate.exchange(url + &quot;/&quot; + username, HttpMethod.GET, entity,</span>
+                    Long.class);
+<span class="nc bnc" id="L131" title="All 2 branches missed.">            if (responseEntity.getBody() != null) {</span>
+<span class="nc" id="L132">                userId = responseEntity.getBody();</span>
+            }
+<span class="nc" id="L134">        } catch (HttpStatusCodeException e) {</span>
+<span class="nc" id="L135">            e.printStackTrace();</span>
+<span class="nc" id="L136">        }</span>
+<span class="nc" id="L137">        return userId;</span>
+    }
+
+    /**
+     * Gets the username of the user.
+     * @param restTemplate restTemplate object
+     * @param url server url
+     * @param id user's id
+     * @param token userToken
+     * @return new username
+     */
+    public String getUserUsername(final RestTemplate restTemplate, final String url,
+                            final Long id, final String token) {
+<span class="nc" id="L150">        String usernameRet = &quot;&quot;;</span>
+
+<span class="nc" id="L152">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L153">        httpHeaders.set(&quot;Authorisation&quot;, &quot;Token &quot; + token);</span>
+<span class="nc" id="L154">        httpHeaders.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="nc" id="L155">        HttpEntity&lt;Long&gt; entity = new HttpEntity&lt;&gt;(httpHeaders);</span>
+
+        try {
+<span class="nc" id="L158">            ResponseEntity&lt;String&gt; responseEntity =</span>
+<span class="nc" id="L159">                    restTemplate.exchange(url + &quot;/&quot; + id, HttpMethod.GET, entity,</span>
+                    String.class);
+<span class="nc bnc" id="L161" title="All 2 branches missed.">            if (responseEntity.getBody() != null) {</span>
+<span class="nc" id="L162">                usernameRet = responseEntity.getBody();</span>
+            }
+<span class="nc" id="L164">        } catch (HttpStatusCodeException e) {</span>
+<span class="nc" id="L165">            e.printStackTrace();</span>
+<span class="nc" id="L166">        }</span>
+<span class="nc" id="L167">        return usernameRet;</span>
+    }
+
+    /**
+     * Adds a friend to the user's database.
+     * @param restTemplate restTempemplate Object
+     * @param url server url
+     * @param relatedUserId user id
+     * @param relatingUserId friend's user id
+     * @param token user token
+     * @return new string
+     */
+    public String addFriend(final RestTemplate restTemplate, final String url,
+                            final Long relatedUserId, final Long relatingUserId,
+                            final String token) {
+<span class="nc" id="L182">        String returnString = &quot;&quot;;</span>
+<span class="nc" id="L183">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L184">        httpHeaders.set(&quot;Authorisation&quot;, &quot;Token &quot; + token);</span>
+<span class="nc" id="L185">        httpHeaders.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="nc" id="L186">        HttpEntity&lt;Long&gt; entity = new HttpEntity&lt;&gt;(relatingUserId, httpHeaders);</span>
+        try {
+<span class="nc" id="L188">            ResponseEntity&lt;String&gt; response = restTemplate.exchange(</span>
+                    url + &quot;/&quot; + relatedUserId, HttpMethod.POST, entity, String.class);
+<span class="nc" id="L190">            returnString = response.getBody();</span>
+<span class="nc" id="L191">        } catch (HttpStatusCodeException e) {</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">            if (e.getStatusCode() == HttpStatus.FORBIDDEN) {</span>
+<span class="nc" id="L193">                returnString = outputErrorMessage(objectMapper, e.getResponseBodyAsString());</span>
+            }
+<span class="nc" id="L195">        }</span>
+<span class="nc" id="L196">        return returnString;</span>
+    }
+
+    /**
+     * Getting a friend request from another user.
+     * @param restTemplate restTemplate object
+     * @param url server url
+     * @param id user id
+     * @param token user token
+     * @return new list of friends
+     */
+    public List&lt;Friends&gt; getFriendRequest(
+            final RestTemplate restTemplate, final String url, final Long id, final String token) {
+
+<span class="nc" id="L210">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L211">        httpHeaders.set(&quot;Authorisation&quot;, &quot;Token &quot; + token);</span>
+<span class="nc" id="L212">        httpHeaders.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="nc" id="L213">        HttpEntity entity = new HttpEntity(httpHeaders);</span>
+
+
+<span class="nc" id="L216">        List&lt;Friends&gt; friendsList = new ArrayList&lt;&gt;();</span>
+        try {
+<span class="nc" id="L218">            ResponseEntity&lt;Friends[]&gt; response</span>
+<span class="nc" id="L219">                    = restTemplate.exchange(url + &quot;/&quot; + id,</span>
+                    HttpMethod.GET, entity, Friends[].class);
+
+<span class="nc bnc" id="L222" title="All 2 branches missed.">            if (response.getBody() != null) {</span>
+<span class="nc" id="L223">                Friends[] list = response.getBody();</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">                for (Friends f : list) {</span>
+<span class="nc" id="L225">                    friendsList.add(f);</span>
+                }
+            }
+<span class="nc" id="L228">        } catch (HttpStatusCodeException e) {</span>
+<span class="nc" id="L229">            e.printStackTrace();</span>
+<span class="nc" id="L230">        }</span>
+<span class="nc" id="L231">        return friendsList;</span>
+    }
+
+    /**
+     * Accepting a friend request.
+     * @param restTemplate restTemplate object
+     * @param url server url
+     * @param relatingUserId friend user id
+     * @param id user id
+     * @param token user token
+     * @return new string
+     */
+    public String accepting(
+            final RestTemplate restTemplate, final String url,
+            final Long relatingUserId, final Long id, final String token) {
+
+<span class="nc" id="L247">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L248">        httpHeaders.set(&quot;Authorisation&quot;, &quot;Token &quot; + token);</span>
+<span class="nc" id="L249">        httpHeaders.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="nc" id="L250">        HttpEntity entity = new HttpEntity(relatingUserId, httpHeaders);</span>
+
+<span class="nc" id="L252">        String responseString = &quot;&quot;;</span>
+        try {
+<span class="nc" id="L254">            ResponseEntity&lt;String&gt; response</span>
+<span class="nc" id="L255">                    = restTemplate.exchange(url + &quot;/&quot; + id, HttpMethod.POST,</span>
+                    entity, String.class);
+
+<span class="nc bnc" id="L258" title="All 2 branches missed.">            if (response.getBody() != null) {</span>
+<span class="nc" id="L259">                responseString = &quot;Accepted&quot;;</span>
+            }
+<span class="nc" id="L261">        } catch (HttpStatusCodeException e) {</span>
+<span class="nc bnc" id="L262" title="All 2 branches missed.">            if (e.getStatusCode() == HttpStatus.FORBIDDEN) {</span>
+<span class="nc" id="L263">                responseString = outputErrorMessage(objectMapper, e.getResponseBodyAsString());</span>
+            }
+<span class="nc" id="L265">        }</span>
+<span class="nc" id="L266">        return responseString;</span>
+    }
+
+    /**
+     * Rejecting a friend request.
+     * @param restTemplate restTemplate Object
+     * @param url server url
+     * @param relatingUserId friends user id
+     * @param id user id
+     * @param token user token
+     * @return new string
+     */
+    public String rejecting(
+            final RestTemplate restTemplate, final String url,
+            final Long relatingUserId, final Long id, final String token) {
+
+<span class="nc" id="L282">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L283">        httpHeaders.set(&quot;Authorisation&quot;, &quot;Token &quot; + token);</span>
+<span class="nc" id="L284">        httpHeaders.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="nc" id="L285">        HttpEntity entity = new HttpEntity(relatingUserId, httpHeaders);</span>
+
+<span class="nc" id="L287">        String responseString = &quot;&quot;;</span>
+        try {
+<span class="nc" id="L289">            ResponseEntity&lt;String&gt; response =</span>
+<span class="nc" id="L290">                    restTemplate.exchange(url + &quot;/&quot; + id, HttpMethod.POST, entity, String.class);</span>
+
+<span class="nc bnc" id="L292" title="All 2 branches missed.">            if (response.getBody() != null) {</span>
+<span class="nc" id="L293">                responseString = &quot;Rejected&quot;;</span>
+            }
+<span class="nc" id="L295">        } catch (HttpStatusCodeException e) {</span>
+<span class="nc bnc" id="L296" title="All 2 branches missed.">            if (e.getStatusCode() == HttpStatus.FORBIDDEN) {</span>
+<span class="nc" id="L297">                responseString = outputErrorMessage(objectMapper, e.getResponseBodyAsString());</span>
+            }
+<span class="nc" id="L299">        }</span>
+<span class="nc" id="L300">        return responseString;</span>
+    }
+
+    /**
+     * Updates.
+     * @param restTemplate restTemplate object
+     * @param argument argument
+     * @param url server url
+     * @param id user id
+     * @param token user token
+     * @return new string
+     */
+    public String updates(
+            final RestTemplate restTemplate, final String argument,
+            final String url, final Long id, final String token) {
+
+<span class="nc" id="L316">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L317">        httpHeaders.set(&quot;Authorisation&quot;, &quot;Token &quot; + token);</span>
+<span class="nc" id="L318">        httpHeaders.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="nc" id="L319">        HttpEntity entity = new HttpEntity(argument, httpHeaders);</span>
+
+<span class="nc" id="L321">        String responseString = &quot;&quot;;</span>
+        try {
+<span class="nc" id="L323">            ResponseEntity&lt;String&gt; response =</span>
+<span class="nc" id="L324">                    restTemplate.exchange(url + &quot;/&quot; + id, HttpMethod.POST, entity, String.class);</span>
+
+<span class="nc bnc" id="L326" title="All 2 branches missed.">            if (response.getBody() != null) {</span>
+<span class="nc" id="L327">                responseString = response.getBody();</span>
+            }
+<span class="nc" id="L329">        } catch (HttpStatusCodeException e) {</span>
+<span class="nc bnc" id="L330" title="All 2 branches missed.">            if (e.getStatusCode() == HttpStatus.FORBIDDEN) {</span>
+<span class="nc" id="L331">                responseString = outputErrorMessage(objectMapper, e.getResponseBodyAsString());</span>
+            }
+<span class="nc" id="L333">        }</span>
+<span class="nc" id="L334">        return responseString;</span>
+    }
+
+    /**
+     * Get the achievements of the user.
+     * @param restTemplate restTemplate object
+     * @param url server url
+     * @param userId user id
+     * @param token user token
+     * @return new list of achievement types
+     */
+    public List&lt;AchievementsType&gt; getAchievementsOfUser(
+            final RestTemplate restTemplate, final String url,
+            final Long userId, final String token) {
+
+<span class="nc" id="L349">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L350">        httpHeaders.set(&quot;Authorisation&quot;, &quot;Token &quot; + token);</span>
+<span class="nc" id="L351">        httpHeaders.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="nc" id="L352">        HttpEntity entity = new HttpEntity(httpHeaders);</span>
+
+<span class="nc" id="L354">        List&lt;AchievementsType&gt; achievementsTypesList = new ArrayList&lt;&gt;();</span>
+        try {
+<span class="nc" id="L356">            ResponseEntity&lt;AchievementsType[]&gt; responseEntity =</span>
+<span class="nc" id="L357">                    restTemplate.exchange(url + &quot;/&quot; + userId, HttpMethod.GET,</span>
+                            entity, AchievementsType[].class);
+
+<span class="nc bnc" id="L360" title="All 2 branches missed.">            if (responseEntity.getBody() != null) {</span>
+<span class="nc" id="L361">                AchievementsType[] list = responseEntity.getBody();</span>
+<span class="nc bnc" id="L362" title="All 2 branches missed.">                for (AchievementsType u : list) {</span>
+<span class="nc" id="L363">                    achievementsTypesList.add(u);</span>
+                }
+            }
+<span class="nc" id="L366">        } catch (HttpStatusCodeException e) {</span>
+<span class="nc" id="L367">            e.printStackTrace();</span>
+<span class="nc" id="L368">        }</span>
+<span class="nc" id="L369">        return achievementsTypesList;</span>
+    }
+
+    /**
+     * Method to get all of a users' friends.
+     * @param restTemplate restTemplate object
+     * @param url url of the request
+     * @param userId userId
+     */
+
+    public List&lt;FriendsUserResp&gt; getUserFriends(
+            final RestTemplate restTemplate, final String url,
+            final Long userId, final String token) {
+
+<span class="nc" id="L383">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L384">        httpHeaders.set(&quot;Authorisation&quot;, &quot;Token &quot; + token);</span>
+<span class="nc" id="L385">        httpHeaders.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="nc" id="L386">        HttpEntity&lt;EmissionsClient&gt; entity = new HttpEntity&lt;&gt;(httpHeaders);</span>
+
+<span class="nc" id="L388">        List&lt;FriendsUserResp&gt; friendsList = new ArrayList&lt;&gt;();</span>
+        try {
+<span class="nc" id="L390">            ResponseEntity&lt;FriendsUserResp[]&gt; responseEntity =</span>
+<span class="nc" id="L391">                    restTemplate.exchange(</span>
+                            url + &quot;/&quot; + userId, HttpMethod.GET, entity, FriendsUserResp[].class);
+
+<span class="nc bnc" id="L394" title="All 2 branches missed.">            if (responseEntity.getBody() != null) {</span>
+<span class="nc" id="L395">                FriendsUserResp[] list = responseEntity.getBody();</span>
+<span class="nc bnc" id="L396" title="All 2 branches missed.">                for (FriendsUserResp u : list) {</span>
+<span class="nc" id="L397">                    friendsList.add(u);</span>
+                }
+            }
+<span class="nc" id="L400">        } catch (HttpStatusCodeException e) {</span>
+<span class="nc" id="L401">            System.out.println(e);</span>
+<span class="nc" id="L402">        }</span>
+<span class="nc" id="L403">        return friendsList;</span>
+    }
+
+
+    /**
+     * Method that checks the credentials of a user.
+     * @param restTemplate restTemplate to use.
+     * @param url Url of the request.
+     * @param authenticateUser authenticateUser object.
+     * @return the token of the authenticated user.
+     */
+
+    public String authUser(
+            final RestTemplate restTemplate, final String url,
+            final AuthenticateUser authenticateUser) {
+<span class="fc" id="L418">        String token = &quot;&quot;;</span>
+        try {
+<span class="fc" id="L420">            AuthenticateUser authenticateUser1 =</span>
+<span class="fc" id="L421">                    restTemplate.postForObject(url, authenticateUser, AuthenticateUser.class);</span>
+<span class="fc bfc" id="L422" title="All 2 branches covered.">            if (authenticateUser1 != null) {</span>
+<span class="fc" id="L423">                token = authenticateUser1.getToken();</span>
+            }
+<span class="fc" id="L425">        } catch (HttpStatusCodeException e) {</span>
+<span class="fc bfc" id="L426" title="All 2 branches covered.">            if (e.getStatusCode() == HttpStatus.FORBIDDEN) {</span>
+<span class="fc" id="L427">                token = outputErrorMessage(objectMapper, e.getResponseBodyAsString());</span>
+            }
+<span class="fc" id="L429">        }</span>
+<span class="fc" id="L430">        return token;</span>
+    }
+
+    /**
+     * Adds emission of a user.
+     * @param restTemplate restTemplate
+     * @param url url
+     * @param userId user Id.
+     * @param emissionsClient emission Client.
+     * @param token token of user.
+     * @return string representing the result.
+     */
+
+    public String addEmissionOfUser(final RestTemplate restTemplate, final String url,
+                                    final Long userId, final EmissionsClient emissionsClient,
+                                    final String token) {
+
+<span class="fc" id="L447">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="fc" id="L448">        httpHeaders.set(&quot;Authorisation&quot;, &quot;Token &quot; + token);</span>
+<span class="fc" id="L449">        httpHeaders.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="fc" id="L450">        HttpEntity&lt;EmissionsClient&gt; entity = new HttpEntity&lt;&gt;(emissionsClient, httpHeaders);</span>
+
+<span class="fc" id="L452">        String response = &quot;&quot;;</span>
+        try {
+<span class="fc" id="L454">            ResponseEntity&lt;String&gt; responseString = restTemplate.exchange(</span>
+                    url + &quot;/&quot; + userId, HttpMethod.POST,
+                    entity, String.class);
+<span class="fc" id="L457">            response = responseString.getBody();</span>
+<span class="fc" id="L458">        } catch (HttpStatusCodeException e) {</span>
+<span class="fc bfc" id="L459" title="All 2 branches covered.">            if (e.getStatusCode() == HttpStatus.FORBIDDEN) {</span>
+<span class="fc" id="L460">                response = outputErrorMessage(objectMapper, e.getResponseBodyAsString());</span>
+            }
+<span class="fc" id="L462">        }</span>
+<span class="fc" id="L463">        return response;</span>
+    }
+
+    /**
+     * Gets the emission of the user.
+     * @param restTemplate restTemplate Object
+     * @param url server url
+     * @param userId user id
+     * @param token user token
+     * @return new emissionfriend object
+     */
+    public EmissionFriend getEmissionsOfUser(final RestTemplate restTemplate, final String url,
+                                             final Long userId, final String token) {
+<span class="nc" id="L476">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L477">        httpHeaders.set(&quot;Authorisation&quot;, &quot;Token &quot; + token);</span>
+<span class="nc" id="L478">        httpHeaders.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="nc" id="L479">        HttpEntity&lt;EmissionsClient&gt; entity = new HttpEntity&lt;&gt;(httpHeaders);</span>
+
+        EmissionFriend emissionFriend;
+
+        try {
+<span class="nc" id="L484">            ResponseEntity&lt;EmissionFriend&gt; responseString = restTemplate.exchange(</span>
+                    url + &quot;/&quot; + userId, HttpMethod.GET,
+                    entity, EmissionFriend.class);
+<span class="nc" id="L487">            emissionFriend = responseString.getBody();</span>
+<span class="nc" id="L488">            return emissionFriend;</span>
+<span class="nc" id="L489">        } catch (HttpStatusCodeException e) {</span>
+<span class="nc bnc" id="L490" title="All 2 branches missed.">            if (e.getStatusCode() == HttpStatus.FORBIDDEN) {</span>
+                //emissionFriend = null;
+                //response = outputErrorMessage(objectMapper, e.getResponseBodyAsString());
+            }
+        }
+<span class="nc" id="L495">        return null;</span>
+    }
+
+
+    /**
+     * Gets the emission of the friends user.
+     * @param restTemplate restTemplate Object
+     * @param url server url
+     * @param token user token
+     * @param userId user id
+     * @return new list of emissionfriend objects
+     */
+    public List&lt;EmissionFriend&gt; getEmissionsOfFriends(final RestTemplate restTemplate,
+                                                      final String url, final String token,
+                                                      Long userId) {
+<span class="nc" id="L510">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L511">        httpHeaders.set(&quot;Authorisation&quot;, &quot;Token &quot; + token);</span>
+<span class="nc" id="L512">        httpHeaders.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="nc" id="L513">        HttpEntity&lt;EmissionsClient&gt; entity = new HttpEntity&lt;&gt;(httpHeaders);</span>
+
+<span class="nc" id="L515">        List&lt;EmissionFriend&gt; toReturn = new ArrayList&lt;&gt;();</span>
+
+        try {
+<span class="nc" id="L518">            ResponseEntity&lt;EmissionFriend[]&gt; responseEntity = restTemplate</span>
+<span class="nc" id="L519">                    .exchange(url + &quot;/&quot; + userId, HttpMethod.GET, entity, EmissionFriend[].class);</span>
+<span class="nc bnc" id="L520" title="All 2 branches missed.">            if (responseEntity.getBody() != null) {</span>
+<span class="nc bnc" id="L521" title="All 2 branches missed.">                for (EmissionFriend e : responseEntity.getBody()) {</span>
+<span class="nc" id="L522">                    toReturn.add(e);</span>
+                }
+            }
+<span class="nc" id="L525">        } catch (HttpStatusCodeException e) {</span>
+<span class="nc" id="L526">            System.out.println(e);</span>
+<span class="nc" id="L527">        }</span>
+
+<span class="nc" id="L529">        return toReturn;</span>
+    }
+
+    private String outputErrorMessage(ObjectMapper objectMapper, String responseString) {
+<span class="fc" id="L533">        String returnString = &quot;&quot;;</span>
+        try {
+<span class="fc" id="L535">            ErrorDetails errorDetails = objectMapper.readValue(responseString, ErrorDetails.class);</span>
+<span class="fc" id="L536">            returnString = errorDetails.getMessage();</span>
+<span class="nc" id="L537">        } catch (IOException exc) {</span>
+<span class="nc" id="L538">            exc.printStackTrace();</span>
+<span class="fc" id="L539">        }</span>
+<span class="fc" id="L540">        return  returnString;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

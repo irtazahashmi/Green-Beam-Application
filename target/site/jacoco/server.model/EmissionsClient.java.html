@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmissionsClient.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GreenBeam - OOP-Project</a> &gt; <a href="index.source.html" class="el_package">server.model</a> &gt; <span class="el_source">EmissionsClient.java</span></div><h1>EmissionsClient.java</h1><pre class="source lang-java linenums">package server.model;
+
+import java.util.Date;
+
+public class EmissionsClient {
+
+    private String emissionType;
+    private float carbonEmission;
+    private Date date;
+
+    /**
+     * Emission client object constructor.
+     * @param emissionType - type of emission
+     * @param carbonEmission - CO2 unit
+     * @param date - timestamp
+     */
+<span class="fc" id="L17">    public EmissionsClient(String emissionType, float carbonEmission, Date date) {</span>
+<span class="fc" id="L18">        this.emissionType = emissionType;</span>
+<span class="fc" id="L19">        this.carbonEmission = carbonEmission;</span>
+<span class="fc" id="L20">        this.date = date;</span>
+<span class="fc" id="L21">    }</span>
+
+<span class="fc" id="L23">    public EmissionsClient() {</span>
+<span class="fc" id="L24">    }</span>
+
+    /**
+     * Sets new emissionType.
+     *
+     * @param emissionType New value of emissionType.
+     */
+    public void setEmissionType(String emissionType) {
+<span class="fc" id="L32">        this.emissionType = emissionType;</span>
+<span class="fc" id="L33">    }</span>
+
+    /**
+     * Gets emissionType.
+     *
+     * @return Value of emissionType.
+     */
+    public String getEmissionType() {
+<span class="fc" id="L41">        return emissionType;</span>
+    }
+
+    /**
+     * Gets carbonEmission.
+     *
+     * @return Value of carbonEmission.
+     */
+    public float getCarbonEmission() {
+<span class="fc" id="L50">        return carbonEmission;</span>
+    }
+
+    /**
+     * Sets new carbonEmission.
+     *
+     * @param carbonEmission New value of carbonEmission.
+     */
+    public void setCarbonEmission(float carbonEmission) {
+<span class="fc" id="L59">        this.carbonEmission = carbonEmission;</span>
+<span class="fc" id="L60">    }</span>
+
+    /**
+     * Sets new date.
+     *
+     * @param date New value of date.
+     */
+    public void setDate(Date date) {
+<span class="fc" id="L68">        this.date = date;</span>
+<span class="fc" id="L69">    }</span>
+
+    /**
+     * Gets date.
+     *
+     * @return Value of date.
+     */
+    public Date getDate() {
+<span class="fc" id="L77">        return date;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L82">        return &quot;EmissionsClient{&quot;</span>
+                + &quot;emissionType='&quot; + emissionType + '\''
+                + &quot;, carbonEmission=&quot; + carbonEmission
+                + &quot;, date=&quot; + date
+                + '}';
+    }
+
+    @Override
+    public boolean equals(Object object) {
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (this == object) {</span>
+<span class="fc" id="L92">            return true;</span>
+        }
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        if (!(object instanceof EmissionsClient)) {</span>
+<span class="fc" id="L95">            return false;</span>
+        }
+<span class="fc" id="L97">        EmissionsClient that = (EmissionsClient) object;</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        return Float.compare(that.getCarbonEmission(), getCarbonEmission()) == 0</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">                &amp;&amp; getEmissionType().equals(that.getEmissionType())</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">                &amp;&amp; getDate().equals(that.getDate());</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

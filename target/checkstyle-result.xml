@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="7.2">
+<file name="/Users/irtazahashmi/template/src/main/java/server/repository/EmissionRepository.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/repository/UserRepository.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/repository/AchievementRepository.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/repository/FriendsRepository.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/Application.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/config/JwtSecurityConfig.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/security/JwtAuthenticationEntryPoint.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/security/JwtValidator.java">
+<error line="33" column="11" severity="warning" message="Catching &apos;RuntimeException&apos; is not allowed." source="com.puppycrawl.tools.checkstyle.checks.coding.IllegalCatchCheck"/>
+<error line="33" column="16" severity="warning" message="WhitespaceAround: &apos;catch&apos; is not followed by whitespace. Empty blocks may only be represented as {} when not part of a multi-block statement (4.1.3)" source="com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAroundCheck"/>
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/security/JwtSuccessHandler.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/security/JwtAuthenticationTokenFilter.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/security/JwtAuthenticationProvider.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/security/JwtGenerator.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/controller/TokenController.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/controller/UserController.java">
+<error line="181" column="5" severity="warning" message="Cyclomatic Complexity is 12 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/AuthenticateUser.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/MetroRide.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/WaterEmission.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/PublicTransportation.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/NaturalGasEmission.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/EmissionType.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/EmissionReductions.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/FriendsUserResp.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/ApiRequestResponse.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/HouseTemperature.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/Achievements.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/JwtUser.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/AchievementsType.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/EmissionsClient.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/PlaneRide.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/FuelOilEmission.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/WasteEmission.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/JwtUserDetails.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/TrainRide.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/Users.java">
+<error line="80" column="12" severity="warning" message="More than 7 parameters (found 9)." source="com.puppycrawl.tools.checkstyle.checks.sizes.ParameterNumberCheck"/>
+<error line="280" column="5" severity="warning" message="Cyclomatic Complexity is 12 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/TaxiRide.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/LocalProduce.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/SolarPanels.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/EmissionFriend.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/Meal.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/ElectricityEmission.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/JwtAuthenticationToken.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/Emissions.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/LpgEmission.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/Friends.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/BikeRide.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/model/ErrorDetails.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/exception/ResourceNotFoundException.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/exception/CustomizedResponseEntityExceptionHandler.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/exception/BadCredentialsException.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/server/exception/UserAlreadyRegistered.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/listenertest/HelloWorld.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/listenertest/ObservableApplication.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/listenertest/MainSceneController.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/Application.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/loginpage/GreenBeamApplication.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/loginpage/LoginController.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/Url.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/mainpage/MainController.java">
+<error line="1" severity="warning" message="File length is 2,849 lines (max allowed is 2,000)." source="com.puppycrawl.tools.checkstyle.checks.sizes.FileLengthCheck"/>
+<error line="78" severity="warning" message="Number of public methods is 58 (max allowed is 50)." source="com.puppycrawl.tools.checkstyle.checks.sizes.MethodCountCheck"/>
+<error line="78" severity="warning" message="Total number of methods is 87 (max allowed is 50)." source="com.puppycrawl.tools.checkstyle.checks.sizes.MethodCountCheck"/>
+<error line="2650" column="5" severity="warning" message="Cyclomatic Complexity is 23 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/mainpage/SidePanelController.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/mainpage/TestController.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/mainpage/CustomAnimation.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/mainpage/TemporaryMainLauncher.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/UserToken.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/services/UserService.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/services/ApiService.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/profilepage/ProfileController.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/profilepage/MainProfile.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/java/client/profilepage/SidePanelController.java">
+</file>
+<file name="/Users/irtazahashmi/template/src/main/resources/application.properties">
+</file>
+</checkstyle>

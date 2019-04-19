@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Emissions.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GreenBeam - OOP-Project</a> &gt; <a href="index.source.html" class="el_package">server.model</a> &gt; <span class="el_source">Emissions.java</span></div><h1>Emissions.java</h1><pre class="source lang-java linenums">package server.model;
+
+import java.util.Date;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+
+@Entity
+@Table(
+        name = &quot;emissions&quot;,
+        schema = &quot;public&quot;
+)
+public class Emissions {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = &quot;id&quot;)
+    private Long id;
+
+    @Column(name = &quot;user_id&quot;)
+    private Long userId;
+
+    @Column(name = &quot;emission_type&quot;)
+    private String emissionType;
+
+    @Column(name = &quot;carbon_footprint&quot;)
+    private float carbonFootprint;
+
+    @Column(name = &quot;date_of_emission&quot;)
+    private Date date;
+
+    /**
+     * Constructor for the emissions object.
+     * @param userId - the userId
+     * @param emissionType - type of emission
+     * @param carbonFootprint - the units of Co2
+     * @param date - timestamp
+     */
+<span class="fc" id="L44">    public Emissions(Long userId, String emissionType, float carbonFootprint, Date date) {</span>
+<span class="fc" id="L45">        this.userId = userId;</span>
+<span class="fc" id="L46">        this.emissionType = emissionType;</span>
+<span class="fc" id="L47">        this.carbonFootprint = carbonFootprint;</span>
+<span class="fc" id="L48">        this.date = date;</span>
+<span class="fc" id="L49">    }</span>
+
+<span class="fc" id="L51">    public Emissions() {}</span>
+
+
+    /**
+     * Sets new carbonFootprint.
+     *
+     * @param carbonFootprint New value of carbonFootprint.
+     */
+    public void setCarbonFootprint(float carbonFootprint) {
+<span class="fc" id="L60">        this.carbonFootprint = carbonFootprint;</span>
+<span class="fc" id="L61">    }</span>
+
+    /**
+     * Sets new id.
+     *
+     * @param id New value of id.
+     */
+    public void setId(Long id) {
+<span class="fc" id="L69">        this.id = id;</span>
+<span class="fc" id="L70">    }</span>
+
+
+    /**
+     * Sets new emissionType.
+     *
+     * @param emissionType New value of emissionType.
+     */
+    public void setEmissionType(String emissionType) {
+<span class="fc" id="L79">        this.emissionType = emissionType;</span>
+<span class="fc" id="L80">    }</span>
+
+    /**
+     * Gets emissionType.
+     *
+     * @return Value of emissionType.
+     */
+    public String getEmissionType() {
+<span class="fc" id="L88">        return emissionType;</span>
+    }
+
+    /**
+     * Gets userId.
+     *
+     * @return Value of userId.
+     */
+    public Long getUserId() {
+<span class="fc" id="L97">        return userId;</span>
+    }
+
+    /**
+     * Gets id.
+     *
+     * @return Value of id.
+     */
+    public Long getId() {
+<span class="fc" id="L106">        return id;</span>
+    }
+
+    /**
+     * Sets new userId.
+     *
+     * @param userId New value of userId.
+     */
+    public void setUserId(Long userId) {
+<span class="fc" id="L115">        this.userId = userId;</span>
+<span class="fc" id="L116">    }</span>
+
+    /**
+     * Gets carbonFootprint.
+     *
+     * @return Value of carbonFootprint.
+     */
+    public float getCarbonFootprint() {
+<span class="fc" id="L124">        return carbonFootprint;</span>
+    }
+
+    /**
+     * Gets date.
+     *
+     * @return Value of date.
+     */
+    public Date getDate() {
+<span class="fc" id="L133">        return date;</span>
+    }
+
+    /**
+     * Sets new date.
+     *
+     * @param date New value of date.
+     */
+    public void setDate(Date date) {
+<span class="fc" id="L142">        this.date = date;</span>
+<span class="fc" id="L143">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L147">        return &quot;Emissions{&quot;</span>
+                + &quot;id=&quot; + id
+                + &quot;, userId=&quot; + userId
+                + &quot;, emissionType='&quot; + emissionType + '\''
+                + &quot;, carbonFootprint=&quot; + carbonFootprint
+                + &quot;, date=&quot; + date
+                + '}';
+    }
+
+    @Override
+    public boolean equals(Object object) {
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        if (this == object) {</span>
+<span class="fc" id="L159">            return true;</span>
+        }
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        if (!(object instanceof Emissions)) {</span>
+<span class="fc" id="L162">            return false;</span>
+        }
+<span class="fc" id="L164">        Emissions emissions = (Emissions) object;</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">        return Float.compare(emissions.getCarbonFootprint(), getCarbonFootprint()) == 0</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">                &amp;&amp; Objects.equals(getId(), emissions.getId())</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">                &amp;&amp; Objects.equals(getUserId(), emissions.getUserId())</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">                &amp;&amp; Objects.equals(getEmissionType(), emissions.getEmissionType())</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">                &amp;&amp; Objects.equals(getDate(), emissions.getDate());</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

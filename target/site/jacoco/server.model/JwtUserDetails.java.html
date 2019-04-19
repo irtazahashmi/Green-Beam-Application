@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtUserDetails.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GreenBeam - OOP-Project</a> &gt; <a href="index.source.html" class="el_package">server.model</a> &gt; <span class="el_source">JwtUserDetails.java</span></div><h1>JwtUserDetails.java</h1><pre class="source lang-java linenums">package server.model;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+
+public class JwtUserDetails implements UserDetails {
+
+    private String userName;
+    private String token;
+    private Long id;
+    private Collection&lt;? extends GrantedAuthority&gt; authorities;
+
+    /**
+     * Main constructor of this class.
+     *
+     * @param userName           username
+     * @param id                 id
+     * @param token              token
+     * @param grantedAuthorities grantedAuthorities
+     */
+    public JwtUserDetails(String userName,
+                          long id, String token,
+<span class="fc" id="L27">                          List&lt;GrantedAuthority&gt; grantedAuthorities) {</span>
+<span class="fc" id="L28">        this.userName = userName;</span>
+<span class="fc" id="L29">        this.id = id;</span>
+<span class="fc" id="L30">        this.token = token;</span>
+<span class="fc" id="L31">        this.authorities = grantedAuthorities;</span>
+<span class="fc" id="L32">    }</span>
+
+    @Override
+    public Collection&lt;? extends GrantedAuthority&gt; getAuthorities() {
+<span class="fc" id="L36">        return null;</span>
+    }
+
+    @Override
+    public String getPassword() {
+<span class="fc" id="L41">        return null;</span>
+    }
+
+    @Override
+    public String getUsername() {
+<span class="nc" id="L46">        return null;</span>
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+<span class="fc" id="L51">        return true;</span>
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+<span class="fc" id="L56">        return true;</span>
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+<span class="fc" id="L61">        return true;</span>
+    }
+
+    @Override
+    public boolean isEnabled() {
+<span class="fc" id="L66">        return true;</span>
+    }
+
+    public String getUserName() {
+<span class="fc" id="L70">        return userName;</span>
+    }
+
+    public void setUserName(String userName) {
+<span class="fc" id="L74">        this.userName = userName;</span>
+<span class="fc" id="L75">    }</span>
+
+    public String getToken() {
+<span class="fc" id="L78">        return token;</span>
+    }
+
+    public void setToken(String token) {
+<span class="fc" id="L82">        this.token = token;</span>
+<span class="fc" id="L83">    }</span>
+
+    public Long getId() {
+<span class="fc" id="L86">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="fc" id="L90">        this.id = id;</span>
+<span class="fc" id="L91">    }</span>
+
+    public void setAuthorities(Collection&lt;? extends GrantedAuthority&gt; authorities) {
+<span class="fc" id="L94">        this.authorities = authorities;</span>
+<span class="fc" id="L95">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L99">        return &quot;JwtUserDetails{&quot;</span>
+                + &quot;userName='&quot; + userName + '\''
+                + &quot;, token='&quot; + token + '\''
+                + &quot;, id=&quot; + id
+                + &quot;, authorities=&quot; + authorities
+                + '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if (this == obj) {</span>
+<span class="fc" id="L110">            return true;</span>
+        }
+<span class="fc bfc" id="L112" title="All 4 branches covered.">        if (obj == null || getClass() != obj.getClass()) {</span>
+<span class="fc" id="L113">            return false;</span>
+        }
+<span class="fc" id="L115">        JwtUserDetails that = (JwtUserDetails) obj;</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        return Objects.equals(userName, that.userName)</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                &amp;&amp; Objects.equals(token, that.token)</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">                &amp;&amp; Objects.equals(id, that.id)</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">                &amp;&amp; Objects.equals(authorities, that.authorities);</span>
+    }
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

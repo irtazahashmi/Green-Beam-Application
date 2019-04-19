@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SidePanelController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GreenBeam - OOP-Project</a> &gt; <a href="index.source.html" class="el_package">client.profilepage</a> &gt; <span class="el_source">SidePanelController.java</span></div><h1>SidePanelController.java</h1><pre class="source lang-java linenums">package client.profilepage;
+
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXTextField;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+
+<span class="nc" id="L18">public class SidePanelController implements Initializable {</span>
+
+    @FXML
+    private JFXButton addFriendsButton;
+
+    @FXML
+    private JFXListView&lt;String&gt; friendslistView;
+
+    @FXML
+    private JFXTextField searchFriends;
+
+    @FXML
+    private JFXListView&lt;String&gt; foundFriends;
+
+    @FXML
+    private JFXButton searchButton;
+
+    @FXML
+    private Pane searchBarBox;
+
+    @FXML
+    private ImageView imageSidePanel;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+<span class="nc" id="L43">        friendslistView.getItems().addAll(&quot;Iron Man&quot;, &quot;Titanic&quot;);</span>
+<span class="nc" id="L44">        System.out.println(&quot;View is now loaded!&quot;);</span>
+
+<span class="nc" id="L46">        searchBarBox.setVisible(false);</span>
+        //initPopup();
+<span class="nc" id="L48">    }</span>
+
+    /**
+     * Activates the search bar.
+     * @param event - once a user clicks the button linked to
+     *              this method, it starts to execute.
+     */
+    public void searchClicked(ActionEvent event) {
+<span class="nc" id="L56">        searchBarBox.setVisible(false);</span>
+<span class="nc" id="L57">        foundFriends.getItems().clear();</span>
+<span class="nc bnc" id="L58" title="All 4 branches missed.">        if (!(searchFriends.getText() == null) &amp;&amp; !(searchFriends.getText().equals(&quot;&quot;))) {</span>
+<span class="nc" id="L59">            foundFriends.getItems().add(searchFriends.getText());</span>
+<span class="nc" id="L60">            searchBarBox.setVisible(true);</span>
+        }
+
+<span class="nc" id="L63">    }</span>
+
+    /**
+     * Closes the search bar.
+     * @param event - once a user clicks the button linked to
+     *              this method, it starts to execute.
+     */
+    public void backSidePanelClicked(ActionEvent event) {
+<span class="nc" id="L71">        searchBarBox.setVisible(false);</span>
+<span class="nc" id="L72">        foundFriends.getItems().clear();</span>
+
+<span class="nc" id="L74">    }</span>
+
+
+
+
+    /**
+     * Adds a friend to the friendslist.
+     * @param event - once a user clicks the button linked to
+     *              this method, it starts to execute.
+     */
+    public void addFriendsClicked(ActionEvent event) {
+<span class="nc" id="L85">        String friend = foundFriends.getSelectionModel().getSelectedItem();</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (!(foundFriends.getSelectionModel().getSelectedItem() == null)) {</span>
+<span class="nc" id="L87">            friendslistView.getItems().add(friend);</span>
+        }
+
+<span class="nc" id="L90">        searchBarBox.setVisible(false);</span>
+<span class="nc" id="L91">    }</span>
+
+
+
+    private void initPopup() {
+<span class="nc" id="L96">        JFXButton b1 = new JFXButton(&quot;Something 01&quot;);</span>
+<span class="nc" id="L97">        JFXButton b2 = new JFXButton(&quot;Something 01&quot;);</span>
+<span class="nc" id="L98">        JFXButton b3 = new JFXButton(&quot;Something 01&quot;);</span>
+
+<span class="nc" id="L100">        b1.setPadding(new Insets(10));</span>
+<span class="nc" id="L101">        b2.setPadding(new Insets(10));</span>
+<span class="nc" id="L102">        b3.setPadding(new Insets(10));</span>
+
+<span class="nc" id="L104">        VBox vbox = new VBox(b1,b2,b3);</span>
+
+<span class="nc" id="L106">    }</span>
+
+
+
+
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

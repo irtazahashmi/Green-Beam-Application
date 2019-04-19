@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthenticateUser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GreenBeam - OOP-Project</a> &gt; <a href="index.source.html" class="el_package">server.model</a> &gt; <span class="el_source">AuthenticateUser.java</span></div><h1>AuthenticateUser.java</h1><pre class="source lang-java linenums">package server.model;
+
+import java.util.Objects;
+import javax.validation.constraints.NotNull;
+
+public class AuthenticateUser {
+
+    @NotNull
+    private String username;
+
+    @NotNull
+    private String password;
+
+    @NotNull
+    private String token;
+
+<span class="fc" id="L17">    public AuthenticateUser() {</span>
+<span class="fc" id="L18">    }</span>
+
+<span class="fc" id="L20">    public AuthenticateUser(final String username1, final String password1) {</span>
+<span class="fc" id="L21">        this.username = username1;</span>
+<span class="fc" id="L22">        this.password = password1;</span>
+<span class="fc" id="L23">    }</span>
+
+    public String getUsername() {
+<span class="fc" id="L26">        return username;</span>
+    }
+
+    public void setUsername(final String username1) {
+<span class="fc" id="L30">        this.username = username1;</span>
+<span class="fc" id="L31">    }</span>
+
+    public String getPassword() {
+<span class="fc" id="L34">        return password;</span>
+    }
+
+    public void setPassword(final String password1) {
+<span class="fc" id="L38">        this.password = password1;</span>
+<span class="fc" id="L39">    }</span>
+
+    public String getToken() {
+<span class="fc" id="L42">        return token;</span>
+    }
+
+    public void setToken(final String token1) {
+<span class="fc" id="L46">        this.token = token1;</span>
+<span class="fc" id="L47">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L51">        return &quot;AuthenticateUser{&quot;</span>
+                + &quot;username='&quot; + username + '\''
+                + &quot;, password='&quot; + password + '\''
+                + &quot;, token='&quot; + token + '\''
+                + '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (this == obj) {</span>
+<span class="fc" id="L61">            return true;</span>
+        }
+<span class="fc bfc" id="L63" title="All 4 branches covered.">        if (obj == null || getClass() != obj.getClass()) {</span>
+<span class="fc" id="L64">            return false;</span>
+        }
+<span class="fc" id="L66">        AuthenticateUser that = (AuthenticateUser) obj;</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        return Objects.equals(username, that.username)</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">                &amp;&amp; Objects.equals(password, that.password)</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">                &amp;&amp; Objects.equals(token, that.token);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

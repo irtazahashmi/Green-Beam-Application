@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Users.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GreenBeam - OOP-Project</a> &gt; <a href="index.source.html" class="el_package">server.model</a> &gt; <span class="el_source">Users.java</span></div><h1>Users.java</h1><pre class="source lang-java linenums">package server.model;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.util.Date;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import javax.validation.constraints.Email;
+
+
+/**
+ * User model.
+ */
+
+@Entity(name = &quot;user_data&quot;)
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = &quot;user_data&quot;, schema = &quot;public&quot;)
+public class Users {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = &quot;user_id&quot;)
+    private Long id;
+
+    @Column(
+            name = &quot;username&quot;,
+            unique = true
+    )
+    private String username;
+
+    @Column(name = &quot;password&quot;)
+    private String password;
+
+    @Column(name = &quot;first_name&quot;)
+    private String firstName;
+
+    @Column(name = &quot;last_name&quot;)
+    private String lastName;
+
+    @Column(name = &quot;country&quot;)
+    private String country;
+
+    @Email
+    @Column(
+            name = &quot;email&quot;,
+            unique = true
+    )
+    private String email;
+
+    //@DateTimeFormat
+    @Column(name = &quot;date_of_birth&quot;)
+    private java.util.Date dateOfBirth;
+
+    @Column(name = &quot;user_role&quot;)
+    private String role;
+
+<span class="fc" id="L64">    public Users() {</span>
+<span class="fc" id="L65">    }</span>
+
+    /**
+     * Constructor of this class.
+     * @param id id.
+     * @param username username.
+     * @param password passwd.
+     * @param firstName firstname.
+     * @param lastName lastname.
+     * @param country country.
+     * @param email email.
+     * @param dateOfBirth dateofBirth.
+     * @param role role of user.
+     */
+    @SuppressWarnings(&quot;CheckStyle&quot;)
+    public Users(final Long id, final String username,
+                 final String password, final String firstName, final String lastName,
+                 final String country, final @Email String email, final java.util.Date dateOfBirth,
+<span class="fc" id="L83">                 final String role) {</span>
+<span class="fc" id="L84">        this.id = id;</span>
+<span class="fc" id="L85">        this.username = username;</span>
+<span class="fc" id="L86">        this.password = password;</span>
+<span class="fc" id="L87">        this.firstName = firstName;</span>
+<span class="fc" id="L88">        this.lastName = lastName;</span>
+<span class="fc" id="L89">        this.country = country;</span>
+<span class="fc" id="L90">        this.email = email;</span>
+<span class="fc" id="L91">        this.dateOfBirth = dateOfBirth;</span>
+<span class="fc" id="L92">        this.role = role;</span>
+<span class="fc" id="L93">    }</span>
+
+
+
+    /**
+     * String representation of this class.
+     * @return  String representation of this class.
+     */
+    @Override
+    public String toString() {
+<span class="fc" id="L103">        return &quot;Users{&quot;</span>
+                + &quot;id=&quot;
+                + id
+                + &quot;, username='&quot; + username + '\''
+                + &quot;, password='&quot; + password + '\''
+                + &quot;, firstName='&quot; + firstName + '\''
+                + &quot;, lastName='&quot; + lastName + '\''
+                + &quot;, country='&quot; + country + '\''
+                + &quot;, email='&quot; + email + '\''
+                + &quot;, dateOfBirth='&quot; + dateOfBirth
+                + '\''
+                + &quot;, role='&quot; + role + '\''
+                + '}';
+    }
+
+    /**
+     * Sets new firstName.
+     *
+     * @param firstNameField New value of firstName.
+     */
+    public void setFirstName(final String firstNameField) {
+<span class="fc" id="L124">        this.firstName = firstNameField;</span>
+<span class="fc" id="L125">    }</span>
+
+    /**
+     * Sets new id.
+     *
+     * @param idField New value of id.
+     */
+    public void setId(final Long idField) {
+<span class="fc" id="L133">        this.id = idField;</span>
+<span class="fc" id="L134">    }</span>
+
+    /**
+     * Gets password.
+     *
+     * @return Value of password.
+     */
+    public String getPassword() {
+<span class="fc" id="L142">        return password;</span>
+    }
+
+    /**
+     * Gets role.
+     *
+     * @return Value of role.
+     */
+    public String getRole() {
+<span class="fc" id="L151">        return role;</span>
+    }
+
+    /**
+     * Sets new username.
+     *
+     * @param usernameField New value of username.
+     */
+    public void setUsername(final String usernameField) {
+<span class="fc" id="L160">        this.username = usernameField;</span>
+<span class="fc" id="L161">    }</span>
+
+    /**
+     * Sets new country.
+     *
+     * @param countryField New value of country.
+     */
+    public void setCountry(final String countryField) {
+<span class="fc" id="L169">        this.country = countryField;</span>
+<span class="fc" id="L170">    }</span>
+
+    /**
+     * Gets dateOfBirth.
+     *
+     * @return Value of dateOfBirth.
+     */
+    public Date getDateOfBirth() {
+<span class="fc" id="L178">        return dateOfBirth;</span>
+    }
+
+    /**
+     * Gets lastName.
+     *
+     * @return Value of lastName.
+     */
+    public String getLastName() {
+<span class="fc" id="L187">        return lastName;</span>
+    }
+
+    /**
+     * Sets new email.
+     *
+     * @param emailField New value of email.
+     */
+    public void setEmail(final String emailField) {
+<span class="fc" id="L196">        this.email = emailField;</span>
+<span class="fc" id="L197">    }</span>
+
+    /**
+     * Gets username.
+     *
+     * @return Value of username.
+     */
+    public String getUsername() {
+<span class="fc" id="L205">        return username;</span>
+    }
+
+    /**
+     * Gets country.
+     *
+     * @return Value of country.
+     */
+    public String getCountry() {
+<span class="fc" id="L214">        return country;</span>
+    }
+
+    /**
+     * Sets new role.
+     *
+     * @param roleField New value of role.
+     */
+    public void setRole(final String roleField) {
+<span class="fc" id="L223">        this.role = roleField;</span>
+<span class="fc" id="L224">    }</span>
+
+    /**
+     * Sets new dateOfBirth.
+     *
+     * @param dateOfBirthField New value of dateOfBirth.
+     */
+    public void setDateOfBirth(final Date dateOfBirthField) {
+<span class="fc" id="L232">        this.dateOfBirth = dateOfBirthField;</span>
+<span class="fc" id="L233">    }</span>
+
+    /**
+     * Gets id.
+     *
+     * @return Value of id.
+     */
+    public Long getId() {
+<span class="fc" id="L241">        return id;</span>
+    }
+
+    /**
+     * Sets new lastName.
+     *
+     * @param lastNameField New value of lastName.
+     */
+    public void setLastName(final String lastNameField) {
+<span class="fc" id="L250">        this.lastName = lastNameField;</span>
+<span class="fc" id="L251">    }</span>
+
+    /**
+     * Sets new password.
+     *
+     * @param passwordField New value of password.
+     */
+    public void setPassword(final String passwordField) {
+<span class="fc" id="L259">        this.password = passwordField;</span>
+<span class="fc" id="L260">    }</span>
+
+    /**
+     * Gets email.
+     *
+     * @return Value of email.
+     */
+    public String getEmail() {
+<span class="fc" id="L268">        return email;</span>
+    }
+
+    /**
+     * Gets firstName.
+     *
+     * @return Value of firstName.
+     */
+    public String getFirstName() {
+<span class="fc" id="L277">        return firstName;</span>
+    }
+
+    @SuppressWarnings(&quot;CheckStyle&quot;)
+    @Override
+    public boolean equals(Object obj) {
+<span class="fc bfc" id="L283" title="All 2 branches covered.">        if (this == obj) {</span>
+<span class="fc" id="L284">            return true;</span>
+        }
+<span class="fc bfc" id="L286" title="All 4 branches covered.">        if (obj == null || getClass() != obj.getClass()) {</span>
+<span class="fc" id="L287">            return false;</span>
+        }
+<span class="fc" id="L289">        Users users = (Users) obj;</span>
+<span class="fc bfc" id="L290" title="All 2 branches covered.">        return Objects.equals(id, users.id)</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">                &amp;&amp; Objects.equals(username, users.username)</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">                &amp;&amp; Objects.equals(password, users.password)</span>
+<span class="fc bfc" id="L293" title="All 2 branches covered.">                &amp;&amp; Objects.equals(firstName, users.firstName)</span>
+<span class="fc bfc" id="L294" title="All 2 branches covered.">                &amp;&amp; Objects.equals(lastName, users.lastName)</span>
+<span class="fc bfc" id="L295" title="All 2 branches covered.">                &amp;&amp; Objects.equals(country, users.country)</span>
+<span class="fc bfc" id="L296" title="All 2 branches covered.">                &amp;&amp; Objects.equals(email, users.email)</span>
+<span class="fc bfc" id="L297" title="All 2 branches covered.">                &amp;&amp; Objects.equals(dateOfBirth, users.dateOfBirth)</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">                &amp;&amp; Objects.equals(role, users.role);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

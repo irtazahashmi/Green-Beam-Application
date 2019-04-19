@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MainSceneController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GreenBeam - OOP-Project</a> &gt; <a href="index.source.html" class="el_package">client.listenertest</a> &gt; <span class="el_source">MainSceneController.java</span></div><h1>MainSceneController.java</h1><pre class="source lang-java linenums">package client.listenertest;
+
+import javafx.beans.binding.NumberBinding;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
+
+
+
+
+<span class="nc" id="L19">public class MainSceneController implements Initializable {</span>
+
+<span class="nc" id="L21">    private final SimpleStringProperty stringProperty = new SimpleStringProperty(&quot;A&quot;);</span>
+    @FXML
+    private Text textField;
+    @FXML
+    private TextField tf1;
+    @FXML
+    private TextField tf2;
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+<span class="nc" id="L31">        SimpleIntegerProperty firstProperty = new SimpleIntegerProperty(5);</span>
+<span class="nc" id="L32">        SimpleIntegerProperty secondProperty = new SimpleIntegerProperty(10);</span>
+<span class="nc" id="L33">        NumberBinding sum = firstProperty.add(secondProperty);</span>
+<span class="nc" id="L34">        System.out.println(sum.getValue());</span>
+<span class="nc" id="L35">        firstProperty.set(20);</span>
+<span class="nc" id="L36">        System.out.println(sum.getValue());</span>
+
+<span class="nc" id="L38">        textField.textProperty().bind(stringProperty);</span>
+<span class="nc" id="L39">        MyTask myTask = new MyTask();</span>
+<span class="nc" id="L40">        textField.setOnMouseClicked(event -&gt; {</span>
+<span class="nc" id="L41">            Timer timer = new Timer(true);</span>
+<span class="nc" id="L42">            timer.scheduleAtFixedRate(myTask, 0, 1 * 1000);</span>
+<span class="nc" id="L43">        });</span>
+
+<span class="nc" id="L45">        tf1.textProperty().bindBidirectional(tf2.textProperty());</span>
+<span class="nc" id="L46">    }</span>
+
+<span class="nc" id="L48">    class MyTask extends TimerTask {</span>
+
+        @Override
+        public void run() {
+<span class="nc" id="L52">            int ch = stringProperty.get().charAt(0);</span>
+<span class="nc" id="L53">            ch++;</span>
+<span class="nc" id="L54">            stringProperty.set(String.valueOf((char) ch));</span>
+<span class="nc" id="L55">        }</span>
+    }
+
+    private void sumNonObservable() {
+<span class="nc" id="L59">        int firstInteger = 10;</span>
+<span class="nc" id="L60">        int secondInteger = 10;</span>
+<span class="nc" id="L61">        int sum = firstInteger + secondInteger;</span>
+<span class="nc" id="L62">        System.out.println(sum); //20</span>
+<span class="nc" id="L63">        firstInteger = 20;</span>
+<span class="nc" id="L64">        System.out.println(sum); //20</span>
+<span class="nc" id="L65">    }</span>
+
+    private void sumObservable() {
+<span class="nc" id="L68">        SimpleIntegerProperty firstProperty = new SimpleIntegerProperty(10);</span>
+<span class="nc" id="L69">        SimpleIntegerProperty secondProperty = new SimpleIntegerProperty(10);</span>
+<span class="nc" id="L70">        NumberBinding sum = firstProperty.add(secondProperty);</span>
+<span class="nc" id="L71">        System.out.println(sum.getValue());</span>
+<span class="nc" id="L72">        firstProperty.set(20);</span>
+<span class="nc" id="L73">        System.out.println(sum.getValue());</span>
+<span class="nc" id="L74">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

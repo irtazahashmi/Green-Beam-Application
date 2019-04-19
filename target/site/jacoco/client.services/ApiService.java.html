@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApiService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">GreenBeam - OOP-Project</a> &gt; <a href="index.source.html" class="el_package">client.services</a> &gt; <span class="el_source">ApiService.java</span></div><h1>ApiService.java</h1><pre class="source lang-java linenums">package client.services;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+import server.model.ApiRequestResponse;
+import server.model.BikeRide;
+import server.model.EmissionReductions;
+import server.model.Meal;
+import server.model.PublicTransportation;
+
+import java.io.IOException;
+import java.io.StringReader;
+import javax.xml.bind.JAXB;
+
+@SuppressWarnings(&quot;Duplicates&quot;)
+public class ApiService {
+
+<span class="nc" id="L22">    private final String url = &quot;https://apis.berkeley.edu/coolclimate/footprint&quot;;</span>
+
+<span class="nc" id="L24">    private RestTemplate restTemplate  = new RestTemplate();</span>
+
+<span class="nc" id="L26">    public ApiService() {}</span>
+
+    /**
+     * Retrives the carbon emissions calculated with the API.
+     * @param meal meal object
+     * @return carbon emission saved
+     */
+
+    public float getVegetarianMealEmissions(Meal meal) {
+
+<span class="nc" id="L36">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L37">        httpHeaders.set(&quot;app_id&quot;, &quot;17371d04&quot;);</span>
+<span class="nc" id="L38">        httpHeaders.set(&quot;app_key&quot;, &quot;d55f1d19083da3a63cbd2be60da2361b&quot;);</span>
+
+<span class="nc" id="L40">        HttpEntity&lt;?&gt; httpEntity = new HttpEntity&lt;&gt;(httpHeaders);</span>
+
+<span class="nc" id="L42">        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(url)</span>
+
+<span class="nc" id="L44">                .queryParam(&quot;input_takeaction_low_carbon_diet&quot;, 1)</span>
+<span class="nc" id="L45">                .queryParam(&quot;input_takeaction_low_carbon_diet_dairyfootprint&quot;, 0.65)</span>
+<span class="nc" id="L46">                .queryParam(&quot;input_takeaction_low_carbon_diet_fvfootprint&quot;, 0.65)</span>
+<span class="nc" id="L47">                .queryParam(&quot;input_takeaction_low_carbon_diet_meatfootprint&quot;, 0)</span>
+<span class="nc" id="L48">                .queryParam(&quot;input_takeaction_low_carbon_diet_cerealsfootprint&quot;, 0.65)</span>
+<span class="nc" id="L49">                .queryParam(&quot;input_takeaction_low_carbon_diet_otherfootprint&quot;, 0.65)</span>
+
+<span class="nc" id="L51">                .queryParam(&quot;input_changed&quot;, 1)</span>
+<span class="nc" id="L52">                .queryParam(&quot;input_location_mode&quot;, &quot;1&quot;)</span>
+<span class="nc" id="L53">                .queryParam(&quot;input_location&quot;, &quot;95843&quot;)</span>
+<span class="nc" id="L54">                .queryParam(&quot;input_income&quot;, &quot;1&quot;)</span>
+<span class="nc" id="L55">                .queryParam(&quot;input_size&quot;, 3)</span>
+<span class="nc" id="L56">                .queryParam(&quot;internal_state_abbreviation&quot;, &quot;CA&quot;)</span>
+<span class="nc" id="L57">                .queryParam(&quot;internal_vehiclemiles&quot;, 500)</span>
+<span class="nc" id="L58">                .queryParam(&quot;input_footprint_household_adults&quot;, &quot;2&quot;)</span>
+<span class="nc" id="L59">                .queryParam(&quot;input_footprint_household_children&quot;, &quot;0&quot;)</span>
+<span class="nc" id="L60">                .queryParam(&quot;input_footprint_transportation_airtotal&quot;, 10000)</span>
+<span class="nc" id="L61">                .queryParam(&quot;input_footprint_transportation_publictrans&quot;, 300)</span>
+<span class="nc" id="L62">                .queryParam(&quot;input_footprint_transportation_num_vehicles&quot;, 1)</span>
+<span class="nc" id="L63">                .queryParam(&quot;input_footprint_transportation_miles1&quot;, 10000)</span>
+<span class="nc" id="L64">                .queryParam(&quot;input_footprint_transportation_mpg1&quot;, 30)</span>
+<span class="nc" id="L65">                .queryParam(&quot;input_footprint_transportation_fuel1&quot;, 0)</span>
+<span class="nc" id="L66">                .queryParam(&quot;input_footprint_transportation_miles2&quot;, 0)</span>
+<span class="nc" id="L67">                .queryParam(&quot;input_footprint_transportation_mpg2&quot;, 35)</span>
+<span class="nc" id="L68">                .queryParam(&quot;input_footprint_transportation_fuel2&quot;, 1)</span>
+<span class="nc" id="L69">                .queryParam(&quot;input_footprint_transportation_miles3&quot;, 0)</span>
+<span class="nc" id="L70">                .queryParam(&quot;input_footprint_transportation_mpg3&quot;, 22)</span>
+<span class="nc" id="L71">                .queryParam(&quot;input_footprint_transportation_fuel3&quot;, 1)</span>
+<span class="nc" id="L72">                .queryParam(&quot;input_footprint_transportation_miles4&quot;, 0)</span>
+<span class="nc" id="L73">                .queryParam(&quot;input_footprint_transportation_mpg4&quot;, 22)</span>
+<span class="nc" id="L74">                .queryParam(&quot;input_footprint_transportation_fuel4&quot;, 1)</span>
+<span class="nc" id="L75">                .queryParam(&quot;input_footprint_transportation_miles5&quot;, 0)</span>
+<span class="nc" id="L76">                .queryParam(&quot;input_footprint_transportation_mpg5&quot;, 22)</span>
+<span class="nc" id="L77">                .queryParam(&quot;input_footprint_transportation_fuel5&quot;, 1)</span>
+<span class="nc" id="L78">                .queryParam(&quot;input_footprint_transportation_miles6&quot;, 0)</span>
+<span class="nc" id="L79">                .queryParam(&quot;input_footprint_transportation_mpg6&quot;, 22)</span>
+<span class="nc" id="L80">                .queryParam(&quot;input_footprint_transportation_fuel6&quot;, 1)</span>
+<span class="nc" id="L81">                .queryParam(&quot;input_footprint_transportation_miles7&quot;, 0)</span>
+<span class="nc" id="L82">                .queryParam(&quot;input_footprint_transportation_mpg7&quot;, 22)</span>
+<span class="nc" id="L83">                .queryParam(&quot;input_footprint_transportation_fuel7&quot;, 1)</span>
+<span class="nc" id="L84">                .queryParam(&quot;input_footprint_transportation_miles8&quot;, 0)</span>
+<span class="nc" id="L85">                .queryParam(&quot;input_footprint_transportation_mpg8&quot;, 22)</span>
+<span class="nc" id="L86">                .queryParam(&quot;input_footprint_transportation_fuel8&quot;, 1)</span>
+<span class="nc" id="L87">                .queryParam(&quot;input_footprint_transportation_miles9&quot;, 0)</span>
+<span class="nc" id="L88">                .queryParam(&quot;input_footprint_transportation_mpg9&quot;, 22)</span>
+<span class="nc" id="L89">                .queryParam(&quot;input_footprint_transportation_fuel9&quot;, 1)</span>
+<span class="nc" id="L90">                .queryParam(&quot;input_footprint_transportation_miles10&quot;, 0)</span>
+<span class="nc" id="L91">                .queryParam(&quot;input_footprint_transportation_mpg10&quot;, 22)</span>
+<span class="nc" id="L92">                .queryParam(&quot;input_footprint_transportation_fuel10&quot;, 1)</span>
+<span class="nc" id="L93">                .queryParam(&quot;input_footprint_transportation_groundtype&quot;,0)</span>
+<span class="nc" id="L94">                .queryParam(&quot;input_footprint_transportation_airtype&quot;, 0)</span>
+<span class="nc" id="L95">                .queryParam(&quot;input_footprint_housing_hdd&quot;, 150)</span>
+<span class="nc" id="L96">                .queryParam(&quot;input_footprint_housing_cdd&quot;, 200)</span>
+<span class="nc" id="L97">                .queryParam(&quot;input_footprint_housing_electricity_type&quot;, 1)</span>
+<span class="nc" id="L98">                .queryParam(&quot;input_footprint_housing_cleanpercent&quot;, 0)</span>
+<span class="nc" id="L99">                .queryParam(&quot;input_footprint_housing_naturalgas_type&quot;, 2)</span>
+<span class="nc" id="L100">                .queryParam(&quot;input_footprint_housing_heatingoil_type&quot;, 1)</span>
+<span class="nc" id="L101">                .queryParam(&quot;input_footprint_housing_heatingoil_dollars_per_gallon&quot;, 5)</span>
+<span class="nc" id="L102">                .queryParam(&quot;input_footprint_housing_squarefeet&quot;, 45)</span>
+<span class="nc" id="L103">                .queryParam(&quot;input_footprint_housing_watersewage&quot;, 300)</span>
+<span class="nc" id="L104">                .queryParam(&quot;input_footprint_housing_gco2_per_kwh&quot;, 215)</span>
+<span class="nc" id="L105">                .queryParam(&quot;input_footprint_housing_electricity_dollars&quot;,300)</span>
+<span class="nc" id="L106">                .queryParam(&quot;input_footprint_housing_electricity_kwh&quot;, 350)</span>
+<span class="nc" id="L107">                .queryParam(&quot;input_footprint_housing_naturalgas_cuft&quot;, 500)</span>
+<span class="nc" id="L108">                .queryParam(&quot;input_footprint_housing_heatingoil_gallons&quot;, 200)</span>
+
+                //.queryParam(&quot;input_footprint_shopping_food_meatfisheggs&quot;, 300)
+
+<span class="nc" id="L112">                .queryParam(&quot;input_footprint_shopping_food_meat_beefpork&quot;, 0)</span>
+<span class="nc" id="L113">                .queryParam(&quot;input_footprint_shopping_food_meat_poultry&quot;, 0)</span>
+<span class="nc" id="L114">                .queryParam(&quot;input_footprint_shopping_food_meat_fish&quot;, 0)</span>
+<span class="nc" id="L115">                .queryParam(&quot;input_footprint_shopping_food_meat_other&quot;, 0)</span>
+<span class="nc" id="L116">                .queryParam(&quot;input_footprint_shopping_food_dairy&quot;, meal.getDairyCalories())</span>
+<span class="nc" id="L117">                .queryParam(&quot;input_footprint_shopping_food_otherfood&quot;, meal.getOtherFoodCalories())</span>
+<span class="nc" id="L118">                .queryParam(&quot;input_footprint_shopping_food_fruitvegetables&quot;,</span>
+<span class="nc" id="L119">                        meal.getFruitVegetablesCalories())</span>
+<span class="nc" id="L120">                .queryParam(&quot;input_footprint_shopping_food_cereals&quot;, meal.getCerealCalories())</span>
+<span class="nc" id="L121">                .queryParam(&quot;input_footprint_shopping_food_meattype&quot;, 1)</span>
+<span class="nc" id="L122">                .queryParam(&quot;input_footprint_shopping_goods_type&quot;, 0)</span>
+<span class="nc" id="L123">                .queryParam(&quot;input_footprint_shopping_goods_other_type&quot;, 0)</span>
+<span class="nc" id="L124">                .queryParam(&quot;input_footprint_shopping_goods_default_furnitureappliances&quot;, 0)</span>
+<span class="nc" id="L125">                .queryParam(&quot;input_footprint_shopping_goods_default_clothing&quot;, 0)</span>
+<span class="nc" id="L126">                .queryParam(&quot;input_footprint_shopping_goods_default_other_entertainment&quot;, 0)</span>
+<span class="nc" id="L127">                .queryParam(&quot;input_footprint_shopping_goods_default_other_office&quot;, 0)</span>
+<span class="nc" id="L128">                .queryParam(&quot;input_footprint_shopping_goods_default_other_personalcare&quot;, 0)</span>
+<span class="nc" id="L129">                .queryParam(&quot;input_footprint_shopping_goods_default_other_autoparts&quot;, 0)</span>
+<span class="nc" id="L130">                .queryParam(&quot;input_footprint_shopping_goods_default_other_medical&quot;, 0)</span>
+<span class="nc" id="L131">                .queryParam(&quot;input_footprint_shopping_goods_total&quot;, 0)</span>
+<span class="nc" id="L132">                .queryParam(&quot;input_footprint_shopping_services_type&quot;, 0)</span>
+<span class="nc" id="L133">                .queryParam(&quot;input_footprint_shopping_services_total&quot;, 0);</span>
+
+<span class="nc" id="L135">        HttpEntity&lt;String&gt; response = restTemplate.exchange(uriComponentsBuilder.build().toUri(),</span>
+                HttpMethod.GET, httpEntity, String.class);
+<span class="nc" id="L137">        ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="nc" id="L138">        System.out.println(response.getBody());</span>
+<span class="nc" id="L139">        ApiRequestResponse responseObject = JAXB.unmarshal(</span>
+<span class="nc" id="L140">                new StringReader(response.getBody()), ApiRequestResponse.class);</span>
+
+<span class="nc" id="L142">        float carbonEmission = -1;</span>
+
+        try {
+<span class="nc" id="L145">            EmissionReductions emissionReductions =</span>
+<span class="nc" id="L146">                    objectMapper.readValue(responseObject.toString(), EmissionReductions.class);</span>
+<span class="nc" id="L147">            carbonEmission = emissionReductions.getVegetarianMealEmission() / 365;</span>
+
+<span class="nc" id="L149">        } catch (IOException e) {</span>
+<span class="nc" id="L150">            e.printStackTrace();</span>
+<span class="nc" id="L151">        }</span>
+<span class="nc" id="L152">        return carbonEmission;</span>
+    }
+
+    /**
+     * Gets the ride a bike emission from the API.
+     * @param ride BikeRide Object
+     * @return carbon emission
+     */
+
+    public float getRideBikeEmissions(BikeRide ride) {
+
+<span class="nc" id="L163">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L164">        httpHeaders.set(&quot;app_id&quot;, &quot;17371d04&quot;);</span>
+<span class="nc" id="L165">        httpHeaders.set(&quot;app_key&quot;, &quot;d55f1d19083da3a63cbd2be60da2361b&quot;);</span>
+
+<span class="nc" id="L167">        HttpEntity&lt;?&gt; httpEntity = new HttpEntity&lt;&gt;(httpHeaders);</span>
+
+<span class="nc" id="L169">        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(url)</span>
+
+<span class="nc" id="L171">                .queryParam(&quot;input_takeaction_ride_a_bike&quot;, 1)</span>
+<span class="nc" id="L172">                .queryParam(&quot;input_takeaction_ride_a_bike_number_of_miles&quot;, 0.65)</span>
+<span class="nc" id="L173">                .queryParam(&quot;input_takeaction_ride_a_bike_mileage_per_gallon&quot;, 0.65)</span>
+<span class="nc" id="L174">                .queryParam(&quot;input_takeaction_ride_a_bike_fuel_type&quot;, 0.65)</span>
+
+<span class="nc" id="L176">                .queryParam(&quot;input_changed&quot;, 1)</span>
+<span class="nc" id="L177">                .queryParam(&quot;input_location_mode&quot;, &quot;1&quot;)</span>
+<span class="nc" id="L178">                .queryParam(&quot;input_location&quot;, &quot;95843&quot;)</span>
+<span class="nc" id="L179">                .queryParam(&quot;input_income&quot;, &quot;1&quot;)</span>
+<span class="nc" id="L180">                .queryParam(&quot;input_size&quot;, 3)</span>
+<span class="nc" id="L181">                .queryParam(&quot;internal_state_abbreviation&quot;, &quot;CA&quot;)</span>
+<span class="nc" id="L182">                .queryParam(&quot;internal_vehiclemiles&quot;, 0)</span>
+<span class="nc" id="L183">                .queryParam(&quot;input_footprint_household_adults&quot;, &quot;2&quot;)</span>
+<span class="nc" id="L184">                .queryParam(&quot;input_footprint_household_children&quot;, &quot;0&quot;)</span>
+<span class="nc" id="L185">                .queryParam(&quot;input_footprint_transportation_airtotal&quot;, 10000)</span>
+<span class="nc" id="L186">                .queryParam(&quot;input_footprint_transportation_publictrans&quot;, 300)</span>
+<span class="nc" id="L187">                .queryParam(&quot;input_footprint_transportation_num_vehicles&quot;, 1)</span>
+<span class="nc" id="L188">                .queryParam(&quot;input_footprint_transportation_miles1&quot;,ride.getNumberOfMiles())</span>
+<span class="nc" id="L189">                .queryParam(&quot;input_footprint_transportation_mpg1&quot;, ride.getCarMileage())</span>
+<span class="nc" id="L190">                .queryParam(&quot;input_footprint_transportation_fuel1&quot;, ride.getFuelType())</span>
+<span class="nc" id="L191">                .queryParam(&quot;input_footprint_transportation_miles2&quot;, 0)</span>
+<span class="nc" id="L192">                .queryParam(&quot;input_footprint_transportation_mpg2&quot;, 35)</span>
+<span class="nc" id="L193">                .queryParam(&quot;input_footprint_transportation_fuel2&quot;, 1)</span>
+<span class="nc" id="L194">                .queryParam(&quot;input_footprint_transportation_miles3&quot;, 0)</span>
+<span class="nc" id="L195">                .queryParam(&quot;input_footprint_transportation_mpg3&quot;, 22)</span>
+<span class="nc" id="L196">                .queryParam(&quot;input_footprint_transportation_fuel3&quot;, 1)</span>
+<span class="nc" id="L197">                .queryParam(&quot;input_footprint_transportation_miles4&quot;, 0)</span>
+<span class="nc" id="L198">                .queryParam(&quot;input_footprint_transportation_mpg4&quot;, 22)</span>
+<span class="nc" id="L199">                .queryParam(&quot;input_footprint_transportation_fuel4&quot;, 1)</span>
+<span class="nc" id="L200">                .queryParam(&quot;input_footprint_transportation_miles5&quot;, 0)</span>
+<span class="nc" id="L201">                .queryParam(&quot;input_footprint_transportation_mpg5&quot;, 22)</span>
+<span class="nc" id="L202">                .queryParam(&quot;input_footprint_transportation_fuel5&quot;, 1)</span>
+<span class="nc" id="L203">                .queryParam(&quot;input_footprint_transportation_miles6&quot;, 0)</span>
+<span class="nc" id="L204">                .queryParam(&quot;input_footprint_transportation_mpg6&quot;, 22)</span>
+<span class="nc" id="L205">                .queryParam(&quot;input_footprint_transportation_fuel6&quot;, 1)</span>
+<span class="nc" id="L206">                .queryParam(&quot;input_footprint_transportation_miles7&quot;, 0)</span>
+<span class="nc" id="L207">                .queryParam(&quot;input_footprint_transportation_mpg7&quot;, 22)</span>
+<span class="nc" id="L208">                .queryParam(&quot;input_footprint_transportation_fuel7&quot;, 1)</span>
+<span class="nc" id="L209">                .queryParam(&quot;input_footprint_transportation_miles8&quot;, 0)</span>
+<span class="nc" id="L210">                .queryParam(&quot;input_footprint_transportation_mpg8&quot;, 22)</span>
+<span class="nc" id="L211">                .queryParam(&quot;input_footprint_transportation_fuel8&quot;, 1)</span>
+<span class="nc" id="L212">                .queryParam(&quot;input_footprint_transportation_miles9&quot;, 0)</span>
+<span class="nc" id="L213">                .queryParam(&quot;input_footprint_transportation_mpg9&quot;, 22)</span>
+<span class="nc" id="L214">                .queryParam(&quot;input_footprint_transportation_fuel9&quot;, 1)</span>
+<span class="nc" id="L215">                .queryParam(&quot;input_footprint_transportation_miles10&quot;, 0)</span>
+<span class="nc" id="L216">                .queryParam(&quot;input_footprint_transportation_mpg10&quot;, 22)</span>
+<span class="nc" id="L217">                .queryParam(&quot;input_footprint_transportation_fuel10&quot;, 1)</span>
+<span class="nc" id="L218">                .queryParam(&quot;input_footprint_transportation_groundtype&quot;,0)</span>
+<span class="nc" id="L219">                .queryParam(&quot;input_footprint_transportation_airtype&quot;, 0)</span>
+<span class="nc" id="L220">                .queryParam(&quot;input_footprint_housing_hdd&quot;, 150)</span>
+<span class="nc" id="L221">                .queryParam(&quot;input_footprint_housing_cdd&quot;, 200)</span>
+<span class="nc" id="L222">                .queryParam(&quot;input_footprint_housing_electricity_type&quot;, 1)</span>
+<span class="nc" id="L223">                .queryParam(&quot;input_footprint_housing_cleanpercent&quot;, 0)</span>
+<span class="nc" id="L224">                .queryParam(&quot;input_footprint_housing_naturalgas_type&quot;, 2)</span>
+<span class="nc" id="L225">                .queryParam(&quot;input_footprint_housing_heatingoil_type&quot;, 1)</span>
+<span class="nc" id="L226">                .queryParam(&quot;input_footprint_housing_heatingoil_dollars_per_gallon&quot;, 5)</span>
+<span class="nc" id="L227">                .queryParam(&quot;input_footprint_housing_squarefeet&quot;, 45)</span>
+<span class="nc" id="L228">                .queryParam(&quot;input_footprint_housing_watersewage&quot;, 300)</span>
+<span class="nc" id="L229">                .queryParam(&quot;input_footprint_housing_gco2_per_kwh&quot;, 215)</span>
+<span class="nc" id="L230">                .queryParam(&quot;input_footprint_housing_electricity_dollars&quot;,300)</span>
+<span class="nc" id="L231">                .queryParam(&quot;input_footprint_housing_electricity_kwh&quot;, 350)</span>
+<span class="nc" id="L232">                .queryParam(&quot;input_footprint_housing_naturalgas_cuft&quot;, 500)</span>
+<span class="nc" id="L233">                .queryParam(&quot;input_footprint_housing_heatingoil_gallons&quot;, 200)</span>
+
+<span class="nc" id="L235">                .queryParam(&quot;input_footprint_shopping_food_meat_beefpork&quot;, 0)</span>
+<span class="nc" id="L236">                .queryParam(&quot;input_footprint_shopping_food_meat_poultry&quot;, 0)</span>
+<span class="nc" id="L237">                .queryParam(&quot;input_footprint_shopping_food_meat_fish&quot;, 0)</span>
+<span class="nc" id="L238">                .queryParam(&quot;input_footprint_shopping_food_meat_other&quot;, 0)</span>
+<span class="nc" id="L239">                .queryParam(&quot;input_footprint_shopping_food_dairy&quot;, 0)</span>
+<span class="nc" id="L240">                .queryParam(&quot;input_footprint_shopping_food_otherfood&quot;, 0)</span>
+<span class="nc" id="L241">                .queryParam(&quot;input_footprint_shopping_food_fruitvegetables&quot;,</span>
+<span class="nc" id="L242">                       0)</span>
+<span class="nc" id="L243">                .queryParam(&quot;input_footprint_shopping_food_cereals&quot;, 0)</span>
+<span class="nc" id="L244">                .queryParam(&quot;input_footprint_shopping_food_meattype&quot;, 1)</span>
+<span class="nc" id="L245">                .queryParam(&quot;input_footprint_shopping_goods_type&quot;, 0)</span>
+<span class="nc" id="L246">                .queryParam(&quot;input_footprint_shopping_goods_other_type&quot;, 0)</span>
+<span class="nc" id="L247">                .queryParam(&quot;input_footprint_shopping_goods_default_furnitureappliances&quot;, 0)</span>
+<span class="nc" id="L248">                .queryParam(&quot;input_footprint_shopping_goods_default_clothing&quot;, 0)</span>
+<span class="nc" id="L249">                .queryParam(&quot;input_footprint_shopping_goods_default_other_entertainment&quot;, 0)</span>
+<span class="nc" id="L250">                .queryParam(&quot;input_footprint_shopping_goods_default_other_office&quot;, 0)</span>
+<span class="nc" id="L251">                .queryParam(&quot;input_footprint_shopping_goods_default_other_personalcare&quot;, 0)</span>
+<span class="nc" id="L252">                .queryParam(&quot;input_footprint_shopping_goods_default_other_autoparts&quot;, 0)</span>
+<span class="nc" id="L253">                .queryParam(&quot;input_footprint_shopping_goods_default_other_medical&quot;, 0)</span>
+<span class="nc" id="L254">                .queryParam(&quot;input_footprint_shopping_goods_total&quot;, 0)</span>
+<span class="nc" id="L255">                .queryParam(&quot;input_footprint_shopping_services_type&quot;, 0)</span>
+<span class="nc" id="L256">                .queryParam(&quot;input_footprint_shopping_services_total&quot;, 0);</span>
+
+<span class="nc" id="L258">        HttpEntity&lt;String&gt; response = restTemplate.exchange(uriComponentsBuilder.build().toUri(),</span>
+                HttpMethod.GET, httpEntity, String.class);
+<span class="nc" id="L260">        ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="nc" id="L261">        System.out.println(response.getBody());</span>
+<span class="nc" id="L262">        ApiRequestResponse responseObject = JAXB.unmarshal(</span>
+<span class="nc" id="L263">                new StringReader(response.getBody()), ApiRequestResponse.class);</span>
+
+<span class="nc" id="L265">        float carbonEmission = -1;</span>
+
+        try {
+<span class="nc" id="L268">            EmissionReductions emissionReductions =</span>
+<span class="nc" id="L269">                    objectMapper.readValue(responseObject.toString(), EmissionReductions.class);</span>
+<span class="nc" id="L270">            carbonEmission = emissionReductions.getRideBikeEmission() / 365;</span>
+
+<span class="nc" id="L272">        } catch (IOException e) {</span>
+<span class="nc" id="L273">            e.printStackTrace();</span>
+<span class="nc" id="L274">        }</span>
+<span class="nc" id="L275">        return carbonEmission;</span>
+    }
+
+    /**
+     * Gets the public transportation emission from the API.
+     * @param transportation PublicTransportation Object
+     * @return new carbon emission
+     */
+    public float getPublicTransportationEmissions(PublicTransportation transportation) {
+
+<span class="nc" id="L285">        HttpHeaders httpHeaders = new HttpHeaders();</span>
+<span class="nc" id="L286">        httpHeaders.set(&quot;app_id&quot;, &quot;17371d04&quot;);</span>
+<span class="nc" id="L287">        httpHeaders.set(&quot;app_key&quot;, &quot;d55f1d19083da3a63cbd2be60da2361b&quot;);</span>
+
+<span class="nc" id="L289">        HttpEntity&lt;?&gt; httpEntity = new HttpEntity&lt;&gt;(httpHeaders);</span>
+
+<span class="nc" id="L291">        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(url)</span>
+<span class="nc" id="L292">                .queryParam(&quot;input_takeaction_transportation_bus&quot;, 1)</span>
+<span class="nc" id="L293">                .queryParam(&quot;input_takeaction_transportation_bus_mileage&quot;, 0.65)</span>
+<span class="nc" id="L294">                .queryParam(&quot;input_takeaction_transportation_miles_traveled&quot;, 0.65)</span>
+<span class="nc" id="L295">                .queryParam(&quot;input_takeaction_transportation_fuel_type&quot;, 0.65)</span>
+
+<span class="nc" id="L297">                .queryParam(&quot;input_changed&quot;, 1)</span>
+<span class="nc" id="L298">                .queryParam(&quot;input_location_mode&quot;, &quot;1&quot;)</span>
+<span class="nc" id="L299">                .queryParam(&quot;input_location&quot;, &quot;95843&quot;)</span>
+<span class="nc" id="L300">                .queryParam(&quot;input_income&quot;, &quot;1&quot;)</span>
+<span class="nc" id="L301">                .queryParam(&quot;input_size&quot;, 3)</span>
+<span class="nc" id="L302">                .queryParam(&quot;internal_state_abbreviation&quot;, &quot;CA&quot;)</span>
+<span class="nc" id="L303">                .queryParam(&quot;internal_vehiclemiles&quot;, 500)</span>
+<span class="nc" id="L304">                .queryParam(&quot;input_footprint_household_adults&quot;, &quot;2&quot;)</span>
+<span class="nc" id="L305">                .queryParam(&quot;input_footprint_household_children&quot;, &quot;0&quot;)</span>
+<span class="nc" id="L306">                .queryParam(&quot;input_footprint_transportation_airtotal&quot;, 10000)</span>
+<span class="nc" id="L307">                .queryParam(&quot;input_footprint_transportation_publictrans&quot;, 300)</span>
+<span class="nc" id="L308">                .queryParam(&quot;input_footprint_transportation_num_vehicles&quot;, 1)</span>
+<span class="nc" id="L309">                .queryParam(&quot;input_footprint_transportation_miles1&quot;,</span>
+<span class="nc" id="L310">                        transportation.getMilesTraveled())</span>
+<span class="nc" id="L311">                .queryParam(&quot;input_footprint_transportation_mpg1&quot;, transportation.getCarMileage())</span>
+<span class="nc" id="L312">                .queryParam(&quot;input_footprint_transportation_fuel1&quot;, transportation.getFuelType())</span>
+<span class="nc" id="L313">                .queryParam(&quot;input_footprint_transportation_miles2&quot;, 0)</span>
+<span class="nc" id="L314">                .queryParam(&quot;input_footprint_transportation_mpg2&quot;, 35)</span>
+<span class="nc" id="L315">                .queryParam(&quot;input_footprint_transportation_fuel2&quot;, 1)</span>
+<span class="nc" id="L316">                .queryParam(&quot;input_footprint_transportation_miles3&quot;, 0)</span>
+<span class="nc" id="L317">                .queryParam(&quot;input_footprint_transportation_mpg3&quot;, 22)</span>
+<span class="nc" id="L318">                .queryParam(&quot;input_footprint_transportation_fuel3&quot;, 1)</span>
+<span class="nc" id="L319">                .queryParam(&quot;input_footprint_transportation_miles4&quot;, 0)</span>
+<span class="nc" id="L320">                .queryParam(&quot;input_footprint_transportation_mpg4&quot;, 22)</span>
+<span class="nc" id="L321">                .queryParam(&quot;input_footprint_transportation_fuel4&quot;, 1)</span>
+<span class="nc" id="L322">                .queryParam(&quot;input_footprint_transportation_miles5&quot;, 0)</span>
+<span class="nc" id="L323">                .queryParam(&quot;input_footprint_transportation_mpg5&quot;, 22)</span>
+<span class="nc" id="L324">                .queryParam(&quot;input_footprint_transportation_fuel5&quot;, 1)</span>
+<span class="nc" id="L325">                .queryParam(&quot;input_footprint_transportation_miles6&quot;, 0)</span>
+<span class="nc" id="L326">                .queryParam(&quot;input_footprint_transportation_mpg6&quot;, 22)</span>
+<span class="nc" id="L327">                .queryParam(&quot;input_footprint_transportation_fuel6&quot;, 1)</span>
+<span class="nc" id="L328">                .queryParam(&quot;input_footprint_transportation_miles7&quot;, 0)</span>
+<span class="nc" id="L329">                .queryParam(&quot;input_footprint_transportation_mpg7&quot;, 22)</span>
+<span class="nc" id="L330">                .queryParam(&quot;input_footprint_transportation_fuel7&quot;, 1)</span>
+<span class="nc" id="L331">                .queryParam(&quot;input_footprint_transportation_miles8&quot;, 0)</span>
+<span class="nc" id="L332">                .queryParam(&quot;input_footprint_transportation_mpg8&quot;, 22)</span>
+<span class="nc" id="L333">                .queryParam(&quot;input_footprint_transportation_fuel8&quot;, 1)</span>
+<span class="nc" id="L334">                .queryParam(&quot;input_footprint_transportation_miles9&quot;, 0)</span>
+<span class="nc" id="L335">                .queryParam(&quot;input_footprint_transportation_mpg9&quot;, 22)</span>
+<span class="nc" id="L336">                .queryParam(&quot;input_footprint_transportation_fuel9&quot;, 1)</span>
+<span class="nc" id="L337">                .queryParam(&quot;input_footprint_transportation_miles10&quot;, 0)</span>
+<span class="nc" id="L338">                .queryParam(&quot;input_footprint_transportation_mpg10&quot;, 22)</span>
+<span class="nc" id="L339">                .queryParam(&quot;input_footprint_transportation_fuel10&quot;, 1)</span>
+<span class="nc" id="L340">                .queryParam(&quot;input_footprint_transportation_groundtype&quot;,0)</span>
+<span class="nc" id="L341">                .queryParam(&quot;input_footprint_transportation_airtype&quot;, 0)</span>
+<span class="nc" id="L342">                .queryParam(&quot;input_footprint_housing_hdd&quot;, 150)</span>
+<span class="nc" id="L343">                .queryParam(&quot;input_footprint_housing_cdd&quot;, 200)</span>
+<span class="nc" id="L344">                .queryParam(&quot;input_footprint_housing_electricity_type&quot;, 1)</span>
+<span class="nc" id="L345">                .queryParam(&quot;input_footprint_housing_cleanpercent&quot;, 0)</span>
+<span class="nc" id="L346">                .queryParam(&quot;input_footprint_housing_naturalgas_type&quot;, 2)</span>
+<span class="nc" id="L347">                .queryParam(&quot;input_footprint_housing_heatingoil_type&quot;, 1)</span>
+<span class="nc" id="L348">                .queryParam(&quot;input_footprint_housing_heatingoil_dollars_per_gallon&quot;, 5)</span>
+<span class="nc" id="L349">                .queryParam(&quot;input_footprint_housing_squarefeet&quot;, 45)</span>
+<span class="nc" id="L350">                .queryParam(&quot;input_footprint_housing_watersewage&quot;, 300)</span>
+<span class="nc" id="L351">                .queryParam(&quot;input_footprint_housing_gco2_per_kwh&quot;, 215)</span>
+<span class="nc" id="L352">                .queryParam(&quot;input_footprint_housing_electricity_dollars&quot;,300)</span>
+<span class="nc" id="L353">                .queryParam(&quot;input_footprint_housing_electricity_kwh&quot;, 350)</span>
+<span class="nc" id="L354">                .queryParam(&quot;input_footprint_housing_naturalgas_cuft&quot;, 500)</span>
+<span class="nc" id="L355">                .queryParam(&quot;input_footprint_housing_heatingoil_gallons&quot;, 200)</span>
+
+                //.queryParam(&quot;input_footprint_shopping_food_meatfisheggs&quot;, 300)
+
+<span class="nc" id="L359">                .queryParam(&quot;input_footprint_shopping_food_meat_beefpork&quot;, 0)</span>
+<span class="nc" id="L360">                .queryParam(&quot;input_footprint_shopping_food_meat_poultry&quot;, 0)</span>
+<span class="nc" id="L361">                .queryParam(&quot;input_footprint_shopping_food_meat_fish&quot;, 0)</span>
+<span class="nc" id="L362">                .queryParam(&quot;input_footprint_shopping_food_meat_other&quot;, 0)</span>
+<span class="nc" id="L363">                .queryParam(&quot;input_footprint_shopping_food_dairy&quot;,0)</span>
+<span class="nc" id="L364">                .queryParam(&quot;input_footprint_shopping_food_otherfood&quot;, 0)</span>
+<span class="nc" id="L365">                .queryParam(&quot;input_footprint_shopping_food_fruitvegetables&quot;,</span>
+<span class="nc" id="L366">                       0)</span>
+<span class="nc" id="L367">                .queryParam(&quot;input_footprint_shopping_food_cereals&quot;, 0)</span>
+<span class="nc" id="L368">                .queryParam(&quot;input_footprint_shopping_food_meattype&quot;, 1)</span>
+<span class="nc" id="L369">                .queryParam(&quot;input_footprint_shopping_goods_type&quot;, 0)</span>
+<span class="nc" id="L370">                .queryParam(&quot;input_footprint_shopping_goods_other_type&quot;, 0)</span>
+<span class="nc" id="L371">                .queryParam(&quot;input_footprint_shopping_goods_default_furnitureappliances&quot;, 0)</span>
+<span class="nc" id="L372">                .queryParam(&quot;input_footprint_shopping_goods_default_clothing&quot;, 0)</span>
+<span class="nc" id="L373">                .queryParam(&quot;input_footprint_shopping_goods_default_other_entertainment&quot;, 0)</span>
+<span class="nc" id="L374">                .queryParam(&quot;input_footprint_shopping_goods_default_other_office&quot;, 0)</span>
+<span class="nc" id="L375">                .queryParam(&quot;input_footprint_shopping_goods_default_other_personalcare&quot;, 0)</span>
+<span class="nc" id="L376">                .queryParam(&quot;input_footprint_shopping_goods_default_other_autoparts&quot;, 0)</span>
+<span class="nc" id="L377">                .queryParam(&quot;input_footprint_shopping_goods_default_other_medical&quot;, 0)</span>
+<span class="nc" id="L378">                .queryParam(&quot;input_footprint_shopping_goods_total&quot;, 0)</span>
+<span class="nc" id="L379">                .queryParam(&quot;input_footprint_shopping_services_type&quot;, 0)</span>
+<span class="nc" id="L380">                .queryParam(&quot;input_footprint_shopping_services_total&quot;, 0);</span>
+
+<span class="nc" id="L382">        HttpEntity&lt;String&gt; response = restTemplate.exchange(uriComponentsBuilder.build().toUri(),</span>
+                HttpMethod.GET, httpEntity, String.class);
+<span class="nc" id="L384">        ObjectMapper objectMapper = new ObjectMapper();</span>
+<span class="nc" id="L385">        System.out.println(response.getBody());</span>
+<span class="nc" id="L386">        ApiRequestResponse responseObject = JAXB.unmarshal(</span>
+<span class="nc" id="L387">                new StringReader(response.getBody()), ApiRequestResponse.class);</span>
+
+<span class="nc" id="L389">        float carbonEmission = -1;</span>
+
+        try {
+<span class="nc" id="L392">            EmissionReductions emissionReductions =</span>
+<span class="nc" id="L393">                    objectMapper.readValue(responseObject.toString(), EmissionReductions.class);</span>
+<span class="nc" id="L394">            carbonEmission = emissionReductions.getPublicTransportationEmission() / 365;</span>
+
+<span class="nc" id="L396">        } catch (IOException e) {</span>
+<span class="nc" id="L397">            e.printStackTrace();</span>
+<span class="nc" id="L398">        }</span>
+<span class="nc" id="L399">        return carbonEmission;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>
